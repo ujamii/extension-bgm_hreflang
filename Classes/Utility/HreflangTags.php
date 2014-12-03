@@ -77,10 +77,11 @@ class HreflangTags {
 	 * @return array $relations
 	 */
 	protected function getCachedRelations($pageId){
+		/** @var \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface $cacheInstance */
 		$cacheInstance = $GLOBALS['typo3CacheManager']->getCache('tx_bgmhreflang_cache');
 		// If $relations is empty array, it hasn't been cached. Calculate the value and store it in the cache:
 		$relationsFromCache = $cacheInstance->getByTag('pageId_' . $pageId);
-		if(count($relationsFromCache)>0 && FALSE){
+		if(count($relationsFromCache)>0){
 			$relations = $relationsFromCache[0];
 		} else {
 			$relations = array();
