@@ -4,75 +4,8 @@ if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-$tempColumns = array(
-	'tx_bgmhreflang_1' => array(
-		'exclude' => 0,
-		'label' => 'LLL:EXT:bgm_hreflang/Resources/Private/Language/Backend.xml:pages.tx_bgmhreflang_1',
-		'config' => array(
-			'type' => 'group',
-			'internal_type' => 'db',
-			'allowed' => 'pages',
-			'foreign_table' => 'pages',
-			'MM' => 'tx_bgmhreflang_page_page_mm',
-			'MM_match_fields' => array(
-				'tablenames' => 'pages',
-			),
-			'MM_insert_fields' => array(
-				'tablenames' => 'pages',
-			),
-			'size' => 6,
-			'autoSizeMax' => 30,
-			'minitems' => 0,
-			'maxitems' => 9999,
-			'selectedListStyle' => 'width:400px;',
-			'wizards' => array(
-				'_PADDING' => 0,
-				'_VERTICAL' => 0,
-				'suggest' => array(
-					'type' => 'suggest',
-					'pages' => array(
-						'searchWholePhrase' => 1,
-					),
-				),
-			),
-		),
-	),
-	'tx_bgmhreflang_2' => array(
-		'exclude' => 0,
-		'label' => 'LLL:EXT:bgm_hreflang/Resources/Private/Language/Backend.xml:pages.tx_bgmhreflang_2',
-		'config' => array(
-			'type' => 'group',
-			'internal_type' => 'db',
-			'allowed' => 'pages',
-			'foreign_table' => 'pages',
-			'MM' => 'tx_bgmhreflang_page_page_mm',
-			'MM_match_fields' => array(
-				'tablenames' => 'pages',
-			),
-			'MM_insert_fields' => array(
-				'tablenames' => 'pages',
-			),
-			'MM_opposite_field' => 'tx_bgmhreflang_1',
-			'size' => 6,
-			'autoSizeMax' => 30,
-			'minitems' => 0,
-			'maxitems' => 9999,
-			'selectedListStyle' => 'width:400px;',
-			'disable_controls' => 'browser',
-		),
-	),
-	'tx_bgmhreflang_list' => array(
-		'exclude' => 0,
-		'label' => 'LLL:EXT:bgm_hreflang/Resources/Private/Language/Backend.xml:pages.tx_bgmhreflang_list',
-		'config' => array(
-			'type' => 'user',
-			'userFunc' => 'BGM\BgmHreflang\Utility\HreflangTags->renderBackendList',
-		),
-	),
-);
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('pages', $tempColumns, 1);
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('pages', 'tx_bgmhreflang', 'tx_bgmhreflang_1,--linebreak--,tx_bgmhreflang_2,--linebreak--,tx_bgmhreflang_list');
-$GLOBALS['TCA']['pages']['palettes']['tx_bgmhreflang']['canNotCollapse'] = 1;
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('pages', '--palette--;LLL:EXT:bgm_theme_zarges/Resources/Private/Language/Backend.xml:pages.palette.tx_bgmhreflang;tx_bgmhreflang;;', '', 'after:lastUpdated');
+if(version_compare(TYPO3_branch, '6.2', '<') && \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('bgm_hreflang')){
+	include_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('bgm_hreflang') . '/Configuration/TCA/Overrides/pages.php');
+}
 
 ?>
