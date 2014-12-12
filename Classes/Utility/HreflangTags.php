@@ -153,12 +153,17 @@ class HreflangTags {
 	protected function getRootPageId($pageId){
 		if (TYPO3_MODE == 'BE') {
 			$rootline = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($pageId);
-			$rootPageId = $rootline[2]['uid'];
 		} else {
 			$this->createSysPageIfNecessary();
 			$rootline = $this->sysPage->getRootLine($pageId);
-			$rootPageId = $rootline[1]['uid'];
 		}
+		foreach ($rootline as $rootlinePage) {
+			if (intval($rootlinePage['is_siteroot']) == 1) {
+				$rootPageId = $rootlinePage['uid'];
+				break;
+			}
+		}
+
 		return $rootPageId;
 	}
 
