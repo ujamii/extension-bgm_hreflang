@@ -51,9 +51,15 @@ class HreflangTags {
 		$renderedList = array();
 		if (intval($GLOBALS['TSFE']->id) > 0) {
 			$currentGetParameters = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET();
+
 			if (isset($currentGetParameters['ZargesProducts'])) {
 				$currentZargesProducts = $this->getCurrentZargesProducts($currentGetParameters['ZargesProducts']);
 			}
+
+			// disable the mountpoint rendering
+			unset($currentGetParameters['MP']);
+			$mpdisable = $GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'];
+			$GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'] = 1;
 
 			$relations = $this->getCachedRelations($GLOBALS['TSFE']->id);
 			foreach ($relations as $relatedPage => $info) {
@@ -65,6 +71,9 @@ class HreflangTags {
 					$renderedList[] = '<link rel="alternate" hreflang="' . $hreflangAttribute . '" href="' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($GLOBALS['TSFE']->cObj->currentPageUrl($getParameters, $relatedPage)) . '" />';
 				}
 			}
+
+			// enable mountpoint rendering
+			$GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'] = $mpdisable;
 		}
 
 		return $content . "\n" . implode($renderedList, "\n") . "\n";
