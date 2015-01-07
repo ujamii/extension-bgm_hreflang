@@ -133,8 +133,6 @@ class HreflangTags {
 	/**
 	 * Get the hreflangattributes for the default language and all translations of $pageId
 	 *
-	 * ATTENTION: Dirty hack to get configuration from RealUrl and to use International branch (6771) as x-default!
-	 *
 	 * @TODO: Check if $rootPageId is correct in FE
 	 * @param integer $pageId
 	 * @return array $hreflangAttributes
@@ -144,13 +142,14 @@ class HreflangTags {
 
 		$rootPageId = $this->getRootPageId($pageId);
 
-		$realURLConf = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl']['www.zarges.com']['preVars'][0]['countryMapping'][intval($rootPageId)];
+		$countryMapping = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'][intval($rootPageId)];
+		$defaultCountryId = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['defaultCountryId'];
 
-		$hreflangAttributes[] = ($rootPageId == 6771 ? 'x-default' : $realURLConf['languageMapping'][0] . '-' . $realURLConf['countryCode']);
+		$hreflangAttributes[] = ($rootPageId == $defaultCountryId ? 'x-default' : $countryMapping['languageMapping'][0] . '-' . $countryMapping['countryCode']);
 
 		$translations = array_keys($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('sys_language_uid', 'pages_language_overlay', 'pid=' . intval($pageId) . ' AND deleted+hidden=0 ', '', '', '', 'sys_language_uid'));
 		foreach ($translations as $translation) {
-			$hreflangAttributes[$translation] = $realURLConf['languageMapping'][$translation] . ($rootPageId == 6771 ? '' : '-' . $realURLConf['countryCode']);
+			$hreflangAttributes[$translation] = $countryMapping['languageMapping'][$translation] . ($rootPageId == $defaultCountryId ? '' : '-' . $countryMapping['countryCode']);
 		}
 		return $hreflangAttributes;
 	}
