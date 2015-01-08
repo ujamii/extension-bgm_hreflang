@@ -11,6 +11,36 @@ class HreflangTags {
 	protected $sysPage;
 
 	/**
+	 * @var array
+	 */
+	protected $getParameters;
+
+	/**
+	 * @var integer
+	 */
+	protected $relatedPage;
+
+	/**
+	 * @var string
+	 */
+	protected $hreflangAttribute;
+
+	/**
+	 * @var array
+	 */
+	protected $hreflangAttributes;
+
+	/**
+	 * @var string
+	 */
+	protected $hrefAttribute;
+
+	/**
+	 * @var string
+	 */
+	protected $renderedListItem;
+
+	/**
 	 * Render the related pages and the shortest path to them
 	 *
 	 * @param $content
@@ -20,18 +50,24 @@ class HreflangTags {
 		$renderedList = '';
 		if(intval($conf['row']['uid']) > 0) {
 			$relations = $this->getCachedRelations($conf['row']['uid']);
+			/** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
+			$signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
 
-			foreach($relations as $relatedPage => $info){
-				$renderedListItem = '<li>' . \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordPath($relatedPage, '', 1000) . ' [' . $relatedPage . ']';
+			foreach($relations as $this->relatedPage => $info){
+				$signalSlotDispatcher->dispatch(__CLASS__, 'backend_beforeRenderSinglePage', array($this));
+				$this->renderedListItem = '<li>' . \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordPath($this->relatedPage, '', 1000) . ' [' . $this->relatedPage . ']';
 				$hreflangAttributes = array();
-				foreach ($info['hreflangAttributes'] as $sysLanguageUid => $hreflangAttribute) {
-					$hreflangAttributes[] = '<li>' . $hreflangAttribute . '</li>';
+				foreach ($info['hreflangAttributes'] as $sysLanguageUid => $this->hreflangAttribute) {
+					$signalSlotDispatcher->dispatch(__CLASS__, 'backend_beforeRenderSingleHreflangAttribute', array($this));
+					$hreflangAttributes[] = '<li>' . $this->hreflangAttribute . '</li>';
+					$signalSlotDispatcher->dispatch(__CLASS__, 'backend_afterRenderSingleHreflangAttribute', array($this));
 				}
 				if (count($hreflangAttributes) > 0) {
-					$renderedListItem .= '<ul style="list-style:disc inside; margin-left: 20px;">' . implode($hreflangAttributes) . '</ul>';
+					$this->renderedListItem .= '<ul style="list-style:disc inside; margin-left: 20px;">' . implode($hreflangAttributes) . '</ul>';
 				}
-				$renderedListItem .= '</li>';
-				$renderedListItems[] = $renderedListItem;
+				$this->renderedListItem .= '</li>';
+				$signalSlotDispatcher->dispatch(__CLASS__, 'backend_afterRenderSinglePage', array($this));
+				$renderedListItems[] = $this->renderedListItem;
 			}
 			sort($renderedListItems);
 			$renderedList = '<ul>' . implode($renderedListItems) . '</ul>';
@@ -50,25 +86,23 @@ class HreflangTags {
 	public function renderFrontendList($content, $conf){
 		$renderedList = array();
 		if (intval($GLOBALS['TSFE']->id) > 0) {
-			$currentGetParameters = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET();
-
-			if (isset($currentGetParameters['ZargesProducts'])) {
-				$currentZargesProducts = $this->getCurrentZargesProducts($currentGetParameters['ZargesProducts']);
-			}
+			/** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
+			$signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
+			$this->getParameters = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET();
 
 			// disable the mountpoint rendering
-			unset($currentGetParameters['MP']);
+			unset($this->getParameters['MP']);
 			$mpdisable = $GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'];
 			$GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'] = 1;
 
 			$relations = $this->getCachedRelations($GLOBALS['TSFE']->id);
-			foreach ($relations as $relatedPage => $info) {
-				foreach ($info['hreflangAttributes'] as $sysLanguageUid => $hreflangAttribute) {
-					$getParameters = array_merge($currentGetParameters, array('L' => $sysLanguageUid));
-					if(isset($currentGetParameters['ZargesProducts'])){
-						$getParameters['ZargesProducts'] = array_merge($getParameters['ZargesProducts'], $this->getZargesProducts($currentZargesProducts, $relatedPage, $sysLanguageUid));
-					}
-					$renderedList[] = '<link rel="alternate" hreflang="' . $hreflangAttribute . '" href="' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($GLOBALS['TSFE']->cObj->currentPageUrl($getParameters, $relatedPage)) . '" />';
+			foreach ($relations as $this->relatedPage => $info) {
+				foreach ($info['hreflangAttributes'] as $sysLanguageUid => $this->hreflangAttribute) {
+					$this->getParameters['L'] = $sysLanguageUid;
+					$signalSlotDispatcher->dispatch(__CLASS__, 'frontend_beforeRenderSingleTag', array($this));
+					$this->renderedListItem = '<link rel="alternate" hreflang="' . $this->hreflangAttribute . '" href="' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($GLOBALS['TSFE']->cObj->currentPageUrl($this->getParameters, $this->relatedPage)) . '" />';
+					$signalSlotDispatcher->dispatch(__CLASS__, 'frontend_afterRenderSingleTag', array($this));
+					$renderedList[] = $this->renderedListItem;
 				}
 			}
 
@@ -80,12 +114,96 @@ class HreflangTags {
 	}
 
 	/**
+	 * @param array $getParameters
+	 */
+	public function setGetParameters($getParameters){
+		$this->getParameters = $getParameters;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getGetParameters() {
+		return $this->getParameters;
+	}
+
+	/**
+	 * @param integer $relatedPage
+	 */
+	public function setRelatedPage($relatedPage){
+		$this->relatedPage = $relatedPage;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getRelatedPage() {
+		return $this->relatedPage;
+	}
+
+	/**
+	 * @param string $hreflangAttribute
+	 */
+	public function setHreflangAttribute($hreflangAttribute){
+		$this->hreflangAttribute = $hreflangAttribute;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getHreflangAttribute() {
+		return $this->hreflangAttribute;
+	}
+
+	/**
+	 * @param array $hreflangAttributes
+	 */
+	public function setHreflangAttributes($hreflangAttributes){
+		$this->hreflangAttributes = $hreflangAttributes;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getHreflangAttributes() {
+		return $this->hreflangAttributes;
+	}
+
+	/**
+	 * @param string $hrefAttribute
+	 */
+	public function setHrefAttribute($hrefAttribute){
+		$this->hrefAttribute = $hrefAttribute;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getHrefAttribute() {
+		return $this->hrefAttribute;
+	}
+
+	/**
+	 * @param string $renderedListItem
+	 */
+	public function setRenderedListItem($renderedListItem){
+		$this->renderedListItem = $renderedListItem;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRenderedListItem() {
+		return $this->renderedListItem;
+	}
+
+	/**
 	 * Get hreflang relations from cache or generate the list and cache them
 	 *
 	 * @param integer $pageId
 	 * @return array $relations
 	 */
-	protected function getCachedRelations($pageId){
+	public function getCachedRelations($pageId){
 		/** @var \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface $cacheInstance */
 		$cacheInstance = $GLOBALS['typo3CacheManager']->getCache('tx_bgmhreflang_cache');
 		// If $relations is empty array, it hasn't been cached. Calculate the value and store it in the cache:
@@ -94,7 +212,7 @@ class HreflangTags {
 			$relations = $relationsFromCache[0];
 		} else {
 			$relations = array();
-			$this->getRelations($pageId, $relations);
+			$this->buildRelations($pageId, $relations);
 			//prepend each related page (= array_keys($relations)) with "pageId_" so this cache is cleared, when the
 			//corresponding page cache is cleared (@see EXT:core/Classes/DataHandling/DataHandler.php::clear_cache())
 			$tags = array_map(function ($value) {
@@ -112,20 +230,20 @@ class HreflangTags {
 	 * @param integer $pageId
 	 * @param array $relations
 	 */
-	protected function getRelations($pageId, &$relations) {
-		$relations[$pageId]['hreflangAttributes'] = $this->getHreflangAttributes($pageId);
+	protected function buildRelations($pageId, &$relations) {
+		$relations[$pageId]['hreflangAttributes'] = $this->buildHreflangAttributes($pageId);
 
 		$directRelations = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tx_bgmhreflang_page_page_mm', 'uid_local=' . intval($pageId) . '');
 		for ($i = 0; $i < count($directRelations); $i++) {
 			if (!isset($relations[$directRelations[$i]['uid_foreign']])) {
-				$this->getRelations($directRelations[$i]['uid_foreign'], $relations);
+				$this->buildRelations($directRelations[$i]['uid_foreign'], $relations);
 			}
 		}
 
 		$indirectRelations = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tx_bgmhreflang_page_page_mm', 'uid_foreign=' . intval($pageId) . '');
 		for ($i = 0; $i < count($indirectRelations); $i++) {
 			if(!isset($relations[$indirectRelations[$i]['uid_local']])){
-				$this->getRelations($indirectRelations[$i]['uid_local'], $relations);
+				$this->buildRelations($indirectRelations[$i]['uid_local'], $relations);
 			}
 		}
 	}
@@ -137,7 +255,7 @@ class HreflangTags {
 	 * @param integer $pageId
 	 * @return array $hreflangAttributes
 	 */
-	protected function getHreflangAttributes($pageId) {
+	protected function buildHreflangAttributes($pageId) {
 		$hreflangAttributes = array();
 
 		$rootPageId = $this->getRootPageId($pageId);
@@ -149,8 +267,15 @@ class HreflangTags {
 
 		$translations = array_keys($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('sys_language_uid', 'pages_language_overlay', 'pid=' . intval($pageId) . ' AND deleted+hidden=0 ', '', '', '', 'sys_language_uid'));
 		foreach ($translations as $translation) {
-			$hreflangAttributes[$translation] = $countryMapping['languageMapping'][$translation] . ($rootPageId == $defaultCountryId ? '' : '-' . $countryMapping['countryCode']);
+			$hreflangAttributes[] = $countryMapping['languageMapping'][$translation] . ($rootPageId == $defaultCountryId ? '' : '-' . $countryMapping['countryCode']);
 		}
+
+		$this->hreflangAttributes = $hreflangAttributes;
+
+		/** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
+		$signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
+		$signalSlotDispatcher->dispatch(__CLASS__, 'buildHreflangAttributes', array($this));
+
 		return $hreflangAttributes;
 	}
 
@@ -185,59 +310,6 @@ class HreflangTags {
 			$this->sysPage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\PageRepository');
 			$this->sysPage->init($GLOBALS['TSFE']->showHiddenPage || $GLOBALS['TSFE']->beUserLogin);
 		}
-	}
-
-	/**
-	 * Gets the full records for the current TreeGroup, Product and ProductVariant
-	 *
-	 * @param array $zargesProduct
-	 * @return array $currentZargesProducts
-	 */
-	protected function getCurrentZargesProducts($zargesProduct){
-		$currentZargesProducts = array();
-		if (intval($zargesProduct['treeGroup']) > 0) {
-			$currentZargesProducts['treeGroup'] = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('*', 'tx_zargesproducts_domain_model_treegroup', 'uid=' . intval($zargesProduct['treeGroup']));
-		}
-		if (intval($zargesProduct['product']) > 0) {
-			$currentZargesProducts['product'] = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('*', 'tx_zargesproducts_domain_model_product', 'uid=' . intval($zargesProduct['product']));
-		}
-		if (intval($zargesProduct['productVariant']) > 0) {
-			$currentZargesProducts['productVariant'] = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('*', 'tx_zargesproducts_domain_model_productvariant', 'uid=' . intval($zargesProduct['productVariant']));
-		}
-
-		return $currentZargesProducts;
-	}
-
-	/**
-	 * Get the TreeGroup, Product and ProductVariant in the related page for the current TreeGroup, Product
-	 * and ProductVariant
-	 *
-	 * @param array $currentZargesProducts
-	 * @param integer $relatedPage
-	 * @param integer $sysLanguageUid
-	 * @return array $zargesProducts
-	 */
-	protected function getZargesProducts($currentZargesProducts, $relatedPage, $sysLanguageUid){
-		$zargesProducts = array();
-		$rootPageId = $this->getRootPageId($relatedPage);
-		$storagePageId = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl']['www.zarges.com']['preVars'][0]['countryMapping'][intval($rootPageId)]['productStorage'];
-		if(isset($currentZargesProducts['treeGroup'])) {
-			$treeGroup = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('uid', 'tx_zargesproducts_domain_model_treegroup', 'mediando_refcode LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr($currentZargesProducts['treeGroup']['mediando_refcode'] , 'tx_zargesproducts_domain_model_treegroup') . ' AND pid=' . intval($storagePageId) . ' AND sys_language_uid=' . intval($sysLanguageUid) . ' ' . $GLOBALS['TSFE']->sys_page->enableFields('tx_zargesproducts_domain_model_treegroup'));
-
-			$zargesProducts['treeGroup'] = intval($treeGroup['uid']);
-		}
-		if(isset($currentZargesProducts['product'])) {
-			$product = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('uid', 'tx_zargesproducts_domain_model_product', 'mediando_refcode LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr($currentZargesProducts['product']['mediando_refcode'] , 'tx_zargesproducts_domain_model_product') . ' AND pid=' . intval($storagePageId) . ' AND sys_language_uid=' . intval($sysLanguageUid) . ' ' . $GLOBALS['TSFE']->sys_page->enableFields('tx_zargesproducts_domain_model_product'));
-
-			$zargesProducts['product'] = intval($product['uid']);
-		}
-		if(isset($currentZargesProducts['productVariant'])) {
-			$productVariant = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('uid', 'tx_zargesproducts_domain_model_productvariant', 'mediando_refcode LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr($currentZargesProducts['productVariant']['mediando_refcode'] , 'tx_zargesproducts_domain_model_productvariant') . ' AND pid=' . intval($storagePageId) . ' AND sys_language_uid=' . intval($sysLanguageUid) . ' ' . $GLOBALS['TSFE']->sys_page->enableFields('tx_zargesproducts_domain_model_productvariant'));
-
-			$zargesProducts['productVariant'] = intval($productVariant['uid']);
-		}
-
-		return $zargesProducts;
 	}
 }
 
