@@ -270,6 +270,15 @@ class HreflangTags {
 			$hreflangAttributes[] = $countryMapping['languageMapping'][$translation] . ($rootPageId == $defaultCountryId ? '' : '-' . $countryMapping['countryCode']);
 		}
 
+		if($countryMapping['additionalCountries']){
+			foreach($countryMapping['additionalCountries'] as $additionalCountry){
+				$hreflangAttributes[] = $countryMapping['languageMapping'][0] . '-' . $additionalCountry;
+				foreach ($translations as $translation) {
+					$hreflangAttributes[] = $countryMapping['languageMapping'][$translation] . '-' . $additionalCountry;
+				}
+			}
+		}
+
 		$this->hreflangAttributes = $hreflangAttributes;
 
 		/** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */

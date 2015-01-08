@@ -8,22 +8,28 @@ if (!is_array($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations
 	$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['tx_bgmhreflang_cache'] = array();
 }
 
-/* DEMO CONFIGURATION
+/**
+ * DEMO CONFIGURATION
+ */
+/*
+//"sys_language_uid" and "isolanguagecode" have to be unique in the array $languageMapping!
 $languageMapping = array(
-	//"sys_language_uid" and "isolanguagecode" have to be unique in the array languageMapping!
-	sys_language_uid => isolanguagecode,
+	//sys_language_uid => isolanguagecode,
 	1 => 'de', //Deutsch
 	2 => 'en', //Englisch
 	3 => 'fr', //Französisch
 );
+//"pageid" is the rootpage of a country tree. It has to be unique in the array $countryMapping!
+//"isocountrycode" has to be unique in the array $countryMapping!
 $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'] = array(
-	//rootpage of a country tree; "pageid" has to be unique in the array countryMapping!
 	pageid => array(
-		//"isocountrycode" has to be unique as countryCode in the array countryMapping!
 		'countryCode' => isocountrycode,
 		//"$languageMapping + array(0 => isolanguagecode)" can be assigned more than once with the same isolanguagecode as languageMapping in the array countryMapping.
 		'languageMapping' => $languageMapping + array(0 => isolanguagecode),
+		//"additionalCountries" is optional
+		'additionalCountries' => array(isocountrycode2, isocountrycode3),
 	),
+
 	12 => array( //International
 		'countryCode' => 'en',
 		'languageMapping' => $languageMapping + array(0 => 'en'),
@@ -31,6 +37,7 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'] = array
 	34 => array( //Deutschland
 		'countryCode' => 'de',
 		'languageMapping' => $languageMapping + array(0 => 'de'),
+		'additionalCountries' => array('at', 'ch'),
 	),
 	56 => array( //UK
 		'countryCode' => 'gb',
