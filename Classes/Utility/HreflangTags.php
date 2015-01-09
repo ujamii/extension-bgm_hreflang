@@ -41,6 +41,15 @@ class HreflangTags {
 	protected $renderedListItem;
 
 	/**
+	 * @var \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+	 */
+	protected $cacheInstance;
+
+	public function __construct(){
+		$this->initializeCache();
+	}
+
+	/**
 	 * Render the related pages and the shortest path to them
 	 *
 	 * @param $content
@@ -204,10 +213,8 @@ class HreflangTags {
 	 * @return array $relations
 	 */
 	public function getCachedRelations($pageId){
-		/** @var \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface $cacheInstance */
-		$cacheInstance = $GLOBALS['typo3CacheManager']->getCache('tx_bgmhreflang_cache');
 		// If $relations is empty array, it hasn't been cached. Calculate the value and store it in the cache:
-		$relationsFromCache = $cacheInstance->getByTag('pageId_' . $pageId);
+		$relationsFromCache = $this->cacheInstance->getByTag('pageId_' . $pageId);
 		if(count($relationsFromCache)>0 && $relationsFromCache[0][$pageId]['hreflangAttributes']){
 			$relations = $relationsFromCache[0];
 		} else {
@@ -219,9 +226,9 @@ class HreflangTags {
 				return 'pageId_' . $value;
 			}, array_keys($relations));
 			foreach($tags as $tag){
-				$cacheInstance->flushByTag($tag);
+				$this->cacheInstance->flushByTag($tag);
 			}
-			$cacheInstance->set($pageId, $relations, $tags, 84000);
+			$this->cacheInstance->set($pageId, $relations, $tags, 84000);
 		}
 
 		return $relations;
@@ -321,6 +328,25 @@ class HreflangTags {
 		if (!is_object($this->sysPage)) {
 			$this->sysPage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\PageRepository');
 			$this->sysPage->init($GLOBALS['TSFE']->showHiddenPage || $GLOBALS['TSFE']->beUserLogin);
+		}
+	}
+
+	/**
+	 * Initialize cache instance to be ready to use
+	 *
+	 * @return void
+	 */
+	protected function initializeCache() {
+		\TYPO3\CMS\Core\Cache\Cache::initializeCachingFramework();
+		try {
+			$this->cacheInstance = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('tx_bgmhreflang_cache');
+		} catch (\TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException $e) {
+			$this->cacheInstance = $GLOBALS['typo3CacheFactory']->create(
+				'tx_bgmhreflang_cache',
+				$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['tx_bgmhreflang_cache']['frontend'],
+				$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['tx_bgmhreflang_cache']['backend'],
+				$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['tx_bgmhreflang_cache']['options']
+			);
 		}
 	}
 }
