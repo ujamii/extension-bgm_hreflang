@@ -52,6 +52,13 @@ Example configuration::
 	//If $_GET['L']==0, pages in this tree are rendered with 'x-default', else only the isolanguagecode is used (without the isocountrycode)
 	$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['defaultCountryId'] = 12;
 
+Außerdem braucht man noch ein bisschen TypoScript::
+
+    headerData.30 = USER
+	headerData.30 {
+		userFunc = \BGM\BgmHreflang\Utility\HreflangTags->renderFrontendList
+	}
+
 Usage
 =====
 
