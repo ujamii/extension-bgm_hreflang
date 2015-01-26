@@ -54,10 +54,10 @@ Example configuration::
 
 Außerdem braucht man noch ein bisschen TypoScript::
 
-    headerData.30 = USER
-	headerData.30 {
-		userFunc = \BGM\BgmHreflang\Utility\HreflangTags->renderFrontendList
-	}
+    page.headerData.30 = USER
+    page.headerData.30 {
+        userFunc = \BGM\BgmHreflang\Utility\HreflangTags->renderFrontendList
+    }
 
 Usage
 =====
