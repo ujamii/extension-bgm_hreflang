@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2015-04-28T15:46:51Z"
+		  product-name="bgm_hreflang">
+		<header/>
+		<body>
+			<trans-unit id="pages.palette.tx_bgmhreflang" xml:space="preserve">
+			<source>Page relations for hreflang tags.</source>
+		</trans-unit>
+		<trans-unit id="pages.tx_bgmhreflang_1" xml:space="preserve">
+			<source>Relations from this page to other pages.</source>
+		</trans-unit>
+		<trans-unit id="pages.tx_bgmhreflang_2" xml:space="preserve">
+			<source>Relations from other pages to this page.</source>
+		</trans-unit>
+		<trans-unit id="pages.tx_bgmhreflang_list" xml:space="preserve">
+			<source>Full list of all hreflang relations found for this page. This list merges the two lists above. And the list includes all other pages, which are related indirectly.</source>
+		</trans-unit>
+		</body>
+	</file>
+</xliff>

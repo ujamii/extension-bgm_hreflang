@@ -7,7 +7,7 @@ if (!defined('TYPO3_MODE')) {
 $tempColumns = array(
 	'tx_bgmhreflang_1' => array(
 		'exclude' => 0,
-		'label' => 'LLL:EXT:bgm_hreflang/Resources/Private/Language/Backend.xml:pages.tx_bgmhreflang_1',
+		'label' => 'LLL:EXT:bgm_hreflang/Resources/Private/Language/Backend.xlf:pages.tx_bgmhreflang_1',
 		'config' => array(
 			'type' => 'group',
 			'internal_type' => 'db',
@@ -39,7 +39,7 @@ $tempColumns = array(
 	),
 	'tx_bgmhreflang_2' => array(
 		'exclude' => 0,
-		'label' => 'LLL:EXT:bgm_hreflang/Resources/Private/Language/Backend.xml:pages.tx_bgmhreflang_2',
+		'label' => 'LLL:EXT:bgm_hreflang/Resources/Private/Language/Backend.xlf:pages.tx_bgmhreflang_2',
 		'config' => array(
 			'type' => 'group',
 			'internal_type' => 'db',
@@ -63,7 +63,7 @@ $tempColumns = array(
 	),
 	'tx_bgmhreflang_list' => array(
 		'exclude' => 0,
-		'label' => 'LLL:EXT:bgm_hreflang/Resources/Private/Language/Backend.xml:pages.tx_bgmhreflang_list',
+		'label' => 'LLL:EXT:bgm_hreflang/Resources/Private/Language/Backend.xlf:pages.tx_bgmhreflang_list',
 		'config' => array(
 			'type' => 'user',
 			'userFunc' => 'BGM\BgmHreflang\Utility\HreflangTags->renderBackendList',
@@ -73,7 +73,7 @@ $tempColumns = array(
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('pages', $tempColumns, 1);
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('pages', 'tx_bgmhreflang', 'tx_bgmhreflang_1,--linebreak--,tx_bgmhreflang_2,--linebreak--,tx_bgmhreflang_list');
 $GLOBALS['TCA']['pages']['palettes']['tx_bgmhreflang']['canNotCollapse'] = 1;
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('pages', '--palette--;LLL:EXT:bgm_hreflang/Resources/Private/Language/Backend.xml:pages.palette.tx_bgmhreflang;tx_bgmhreflang;;', '', 'after:lastUpdated');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('pages', '--palette--;LLL:EXT:bgm_hreflang/Resources/Private/Language/Backend.xlf:pages.palette.tx_bgmhreflang;tx_bgmhreflang;;', '', 'after:lastUpdated');
 
 $GLOBALS['TCA']['pages']['ctrl']['setToDefaultOnCopy'] = ($GLOBALS['TCA']['pages']['ctrl']['setToDefaultOnCopy'] ? $GLOBALS['TCA']['pages']['ctrl']['setToDefaultOnCopy'] . ',' : '') . 'tx_bgmhreflang_1,tx_bgmhreflang_2';
 ?>
