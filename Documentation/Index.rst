@@ -1,158 +1,274 @@
-===========================
-hreflang tags for TYPO3 CMS
-===========================
+===============================================================
+<link rel="alternate" hreflang="" href="" /> tags for TYPO3 CMS
+===============================================================
 
-Redaktionell bearbeitbare hreflang-Tags.
+I call them hreflang tags! :-)
 
-Infos zu hreflang-Tags bei Google: https://support.google.com/webmasters/answer/189077
+More information about hreflang tags at Google: https://support.google.com/webmasters/answer/189077
+
+.. figure:: Images/Editors.png
+	:alt: Editors view
+	:align: center
+
+Why?
+====
+
+If you use the sys_languages for countries or if you have just one country with different languages, then there is no
+need for this extension. Then you can build the hreflang tags with simple TypoScript.
+
+But if you have multiple countries with multiple languages, then you will need this extension. Because then you will
+have one page tree per country ("country branch") and TYPO3 CMS can not connect this country branches automatically.
+The editors have to say, which pages from the different country branches belong together.
+
+Prerequisites
+=============
+
+* One page tree per country ("country branch")
+* Root of each country branch has the option "Use as Root Page" set
 
 Configuration
 =============
 
-Die Konfiguration erfolgt in der AdditionalConfiguration.php oder der ext_localconf.php der Theme-Extension.
+The configuration is done in the AdditionalConfiguration.php or your Theme-Extension's ext_localconf.php:
 
-Example configuration::
+.. code:: php
 
-	//"sys_language_uid" and "isolanguagecode" have to be unique in the array $languageMapping!
 	$languageMapping = array(
-		//sys_language_uid => isolanguagecode,
-		1 => 'de', //Deutsch
-		2 => 'en', //Englisch
-		3 => 'fr', //Französisch
+
+		//"sys_language_uid" and "isolanguagecode" have to be unique in the array $languageMapping!
+		sys_language_uid => isolanguagecode,
+
+		//Exaxample
+		1 => 'de', //german
+		11 => 'en', //english
+		21 => 'it', //italian
+		31 => 'fr', //french
 	);
-	//"pageid" is the rootpage of a country tree. It has to be unique in the array $countryMapping!
-	//"isocountrycode" has to be unique in the array $countryMapping!
+
 	$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'] = array(
+
+		//"pageid" is the rootpage of a country branch. It has to be unique in the array $countryMapping!
 		pageid => array(
+
+			//"isocountrycode" has to be unique in the array $countryMapping!
 			'countryCode' => isocountrycode,
-			//"$languageMapping + array(0 => isolanguagecode)" can be assigned more than once with the same isolanguagecode as languageMapping in the array countryMapping.
+
+			//'$languageMapping + array(0 => isolanguagecode)' can be assigned more than once with the same "isolanguagecode" in the array countryMapping.
 			'languageMapping' => $languageMapping + array(0 => isolanguagecode),
-			//"additionalCountries" is optional
-			'additionalCountries' => array(isocountrycode2, isocountrycode3),
+
+			//This is optional. You need this, if you want the Germany country branch to be used as Austrian country branch, too.
+			'additionalCountries' => array(isocountrycode, isocountrycode, ...),
 		),
 
-		12 => array( //International
+		//Example
+		61 => array( //International
 			'countryCode' => 'en',
 			'languageMapping' => $languageMapping + array(0 => 'en'),
 		),
-		34 => array( //Deutschland
+		111 => array( //Germany and Austria
 			'countryCode' => 'de',
 			'languageMapping' => $languageMapping + array(0 => 'de'),
-			'additionalCountries' => array('at', 'ch'),
+			'additionalCountries' => array('at'),
 		),
-		56 => array( //UK
-			'countryCode' => 'gb',
-			'languageMapping' => $languageMapping + array(0 => 'en'),
+		161 => array( //Switzerland
+			'countryCode' => 'ch',
+			'languageMapping' => $languageMapping + array(0 => 'de'),
 		),
-		78 => array( //France
-			'countryCode' => 'fr',
-			'languageMapping' => $languageMapping + array(0 => 'fr'),
+		211 => array( //Italy
+			'countryCode' => 'it',
+			'languageMapping' => $languageMapping + array(0 => 'it'),
 		),
 	);
-	//If $_GET['L']==0, pages in this tree are rendered with 'x-default', else only the isolanguagecode is used (without the isocountrycode)
-	$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['defaultCountryId'] = 12;
 
-Außerdem braucht man noch ein bisschen TypoScript::
+	//If $_GET['L']==0, pages in this tree are rendered with hreflang="x-default", else only the isolanguagecode is used (without the isocountrycode)
+	$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['defaultCountryId'] = 61;
+
+And you need some TypoScript::
 
     page.headerData.30 = USER
     page.headerData.30 {
-        userFunc = \BGM\BgmHreflang\Utility\HreflangTags->renderFrontendList
+        userFunc = BGM\BgmHreflang\Utility\HreflangTags->renderFrontendList
     }
 
 Usage
 =====
 
-Redakteure können in den Seiteneigenschaften Seiten aus verschiedenen Länderästen miteinander verknüpfen
+Editors can connect the pages from the different country branches in the page properties.
 
 Example
 -------
 
-Seitenbaum::
+Pagetree
+````````
 
-	- 1 root
-	-- 2 Deutschland (soll auch für Österreich gelten)
-	--- 3 Seite XYZ (Sprachen: 0 deutsch)
-	--- 10 Seite ABC (Sprachen: 0 deutsch)
-	-- 4 Frankreich
-	--- 5 Seite XYZ (Sprachen: 0 französisch)
-	--- 11 Seite ABC (Sprachen: 0 französisch)
-	--- 14 Seite DEF (Sprachen: 0 französisch)
-	-- 6 Schweiz
-	--- 7 Seite XYZ (Sprachen: 0 deutsch, 2 französisch, 3 italienisch)
-	--- 12 Seite ABC (Sprachen: 0 deutsch, 3 italienisch)
-	--- 15 Seite WER (Sprachen: 0 deutsch, 3 italienisch)
-	-- 8 International
-	--- 9 Seite XYZ (Sprachen: 0 englisch, 1 deutsch)
-	--- 13 Seite ABC (Sprachen: 0 englisch, 1 deutsch)
+.. sidebar:: Pagetree
 
-Konfiguration::
+	.. figure:: Images/Pagetree.png
+		:alt: Example pagetree
+		:align: center
+
+- 61 International
+- - 71 Page A
+- - - sys_language_uid 0 => english
+- - 81 Page B
+- - - sys_language_uid 0 => english
+- - 91 Page C
+- - - sys_language_uid 0 => english
+- - 101 Page D
+- - - sys_language_uid 0 => english
+- - - sys_language_uid 1 => german
+- 111 Deutschland
+- - 121 Seite A
+- - - sys_language_uid 0 => german
+- - 131 Seite B
+- - - sys_language_uid 0 => german
+- - 141 Seite C
+- - - sys_language_uid 0 => german
+- - - sys_language_uid 11 => english
+- - 151 Seite D
+- - - sys_language_uid 0 => german
+- 161 Schweiz
+- - 201 Seite A
+- - - sys_language_uid 0 => german
+- - - sys_language_uid 21 => italian
+- - - sys_language_uid 31 => french
+- - 191 Seite B
+- - - sys_language_uid 0 => german
+- - - sys_language_uid 21 => italian
+- - 181 Seite C
+- - - sys_language_uid 0 => german
+- - - sys_language_uid 31 => french
+- - 171 Seite D
+- - - sys_language_uid 0 => german
+- 211 Italia
+- - 251 Pagina A
+- - - sys_language_uid 0 => italian
+- - 241 Pagina B
+- - - sys_language_uid 0 => italian
+- - 231 Pagina C
+- - - sys_language_uid 0 => italian
+- - 221 Pagina D
+- - - sys_language_uid 0 => italian
+- - - sys_language_uid 1 => german
+
+Configuration
+`````````````
+
+.. code:: php
 
 	$languageMapping = array(
-		1 => 'de', //deutsch
-		2 => 'fr', //französisch
-		3 => 'it', //italienisch
+		1 => 'de', //german
+		11 => 'en', //english
+		21 => 'it', //italian
+		31 => 'fr', //french
 	);
 	$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'] = array(
-		2 => array(
+		//Example
+		61 => array( //International
+			'countryCode' => 'en',
+			'languageMapping' => $languageMapping + array(0 => 'en'),
+		),
+		111 => array( //Germany and Austria
 			'countryCode' => 'de',
 			'languageMapping' => $languageMapping + array(0 => 'de'),
 			'additionalCountries' => array('at'),
 		),
-		4 => array(
-			'countryCode' => 'fr',
-			'languageMapping' => $languageMapping + array(0 => 'fr'),
-		),
-		6 => array(
+		161 => array( //Switzerland
 			'countryCode' => 'ch',
 			'languageMapping' => $languageMapping + array(0 => 'de'),
 		),
-		8 => array(
-			'countryCode' => 'en',
-			'languageMapping' => $languageMapping + array(0 => 'en'),
+		211 => array( //Italy
+			'countryCode' => 'it',
+			'languageMapping' => $languageMapping + array(0 => 'it'),
 		),
 	);
-	$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['defaultCountryId'] = 8;
+	$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['defaultCountryId'] = 61;
 
-Der Redakteur hat alle XYZ-Seiten miteinander verknüpft. Daraus ergeben sich diese Tags auf den XYZ-Seiten::
+Output
+``````
 
-	<link rel="alternate" hreflang="de-de" href="http://domain.tld/index.php?id=3 />
-	<link rel="alternate" hreflang="de-at" href="http://domain.tld/index.php?id=3 />
-	<link rel="alternate" hreflang="fr-fr" href="http://domain.tld/index.php?id=5 />
-	<link rel="alternate" hreflang="de-ch" href="http://domain.tld/index.php?id=7 />
-	<link rel="alternate" hreflang="fr-ch" href="http://domain.tld/index.php?id=7&L=2 />
-	<link rel="alternate" hreflang="it-ch" href="http://domain.tld/index.php?id=7&L=3 />
-	<link rel="alternate" hreflang="x-default" href="http://domain.tld/index.php?id=9" />
-	<link rel="alternate" hreflang="de" href="http://domain.tld/index.php?id=9&L=1" />
+**1) The editor connected all A pages.**
+So we have these hreflang tags on the A pages:
 
-Der Redakteur hat die ABC-Seiten 10, 11 und 12 miteinander verknüpft (13 hat er vergessen ;-)). Daraus ergeben sich
-diese Tags auf den ABC-Seiten 10, 11 und 12::
+.. code:: html
 
-	<link rel="alternate" hreflang="de-de" href="http://domain.tld/index.php?id=10 />
-	<link rel="alternate" hreflang="de-at" href="http://domain.tld/index.php?id=10 />
-	<link rel="alternate" hreflang="fr-fr" href="http://domain.tld/index.php?id=11 />
-	<link rel="alternate" hreflang="de-ch" href="http://domain.tld/index.php?id=12 />
-	<link rel="alternate" hreflang="it-ch" href="http://domain.tld/index.php?id=12&L=3 />
+	<link rel="alternate" hreflang="x-default" href="http://development.bgm.projects.localhost/index.php?id=71" />
+	<link rel="alternate" hreflang="de-de" href="http://development.bgm.projects.localhost/index.php?id=121" />
+	<link rel="alternate" hreflang="de-at" href="http://development.bgm.projects.localhost/index.php?id=121" />
+	<link rel="alternate" hreflang="de-ch" href="http://development.bgm.projects.localhost/index.php?id=201" />
+	<link rel="alternate" hreflang="it-ch" href="http://development.bgm.projects.localhost/index.php?id=201&L=21" />
+	<link rel="alternate" hreflang="fr-ch" href="http://development.bgm.projects.localhost/index.php?id=201&L=31" />
+	<link rel="alternate" hreflang="it-it" href="http://development.bgm.projects.localhost/index.php?id=251" />
 
-Und auf der Seite 13 werden nur diese Tags ausgegeben::
+**2) The editor connected the B pages 81, 131 and 241 (he has forgotten to connect the swiss B page 191 ;-)).**
+So we have these hreflang tags on the B pages 81, 131 and 241:
 
-	<link rel="alternate" hreflang="x-default" href="http://domain.tld/index.php?id=13" />
-	<link rel="alternate" hreflang="de" href="http://domain.tld/index.php?id=13&L=1" />
+.. code:: html
 
-Auf der Seite DEF (14) wird nur dieser Tag ausgegeben (ein Land, eine Sprache, nicht verknüpft)::
+	<link rel="alternate" hreflang="x-default" href="http://development.bgm.projects.localhost/index.php?id=81" />
+	<link rel="alternate" hreflang="de-de" href="http://development.bgm.projects.localhost/index.php?id=131" />
+	<link rel="alternate" hreflang="de-at" href="http://development.bgm.projects.localhost/index.php?id=131" />
+	<link rel="alternate" hreflang="it-it" href="http://development.bgm.projects.localhost/index.php?id=241" />
 
-	<link rel="alternate" hreflang="fr-fr" href="http://domain.tld/index.php?id=14 />
+And we have these tags on the swiss B page 191:
 
-Auf der Seite WER (15) werden diese Tags ausgegeben (ein Land, zwei Sprache, nicht verknüpft)::
+.. code:: html
 
-	<link rel="alternate" hreflang="de-ch" href="http://domain.tld/index.php?id=15 />
-	<link rel="alternate" hreflang="it-ch" href="http://domain.tld/index.php?id=15&L=3 />
+	<link rel="alternate" hreflang="de-ch" href="http://development.bgm.projects.localhost/index.php?id=191" />
+	<link rel="alternate" hreflang="it-ch" href="http://development.bgm.projects.localhost/index.php?id=191&L=21" />
+
+**3) The international C page 91 is connected to the german C page 141. And the german C page 141 is connected to the
+italian C page 231.**
+
+.. code:: html
+
+	<link rel="alternate" hreflang="de-de" href="http://development.bgm.projects.localhost/index.php?id=141" />
+	<link rel="alternate" hreflang="de-at" href="http://development.bgm.projects.localhost/index.php?id=141" />
+	<link rel="alternate" hreflang="it-it" href="http://development.bgm.projects.localhost/index.php?id=231" />
+	<link rel="alternate" hreflang="x-default" href="http://development.bgm.projects.localhost/index.php?id=91" />
+
+**4) The swiss C page 181 is not connected to any other page and has a translation.**
+
+.. code:: html
+
+	<link rel="alternate" hreflang="de-ch" href="http://development.bgm.projects.localhost/index.php?id=181" />
+	<link rel="alternate" hreflang="fr-ch" href="http://development.bgm.projects.localhost/index.php?id=181&L=31" />
+
+**5) The international D page 101 is not connected to another page and has a translation.**
+
+.. code:: html
+
+	<link rel="alternate" hreflang="x-default" href="http://development.bgm.projects.localhost/index.php?id=101" />
+	<link rel="alternate" hreflang="de" href="http://development.bgm.projects.localhost/index.php?id=101&L=1" />
+
+**6) The german D page 151 is not connected to any other page and has no translation, but should be used for Austria, too.**
+
+.. code:: html
+
+	<link rel="alternate" hreflang="de-de" href="http://development.bgm.projects.localhost/index.php?id=151" />
+	<link rel="alternate" hreflang="de-at" href="http://development.bgm.projects.localhost/index.php?id=151" />
 
 Developers
 ==========
 
-Es gibt mehrere Signals an diversen Stellen in der Extension. Diese können genutzt werden, um die hreflang-Tags zu
-beeinflussen.
+There are a lot of signals at different places in the code. Feel free to use them :-)
 
-Bei ZARGES ist zum Beispiel ein automatisches Mapping der Produkte zwischen den Länderästen möglich. Dadurch können
-die Tags auf den Produktdetailseiten automatisch erzeugt werden.
-https://gitlab.bgm-gmbh.de/zarges/internet/blob/master/typo3conf/ext/bgm_theme_zarges/Classes/SignalSlot/HreflangTags.php
+Example
+-------
+
+If you have product records in each country branch, but the EAN is the same, you could connect the products detail
+view automatically depending on the EAN:
+
+.. code:: php
+
+	//include this in your AdditionalConfiguration.php or your Theme-Extension's ext_localconf.php
+	\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher')
+		->connect(
+			'BGM\\BgmHreflang\\Utility\\HreflangTags',
+			'frontend_beforeRenderSingleTag',
+			'BGM\\BgmTheme\\SignalSlot\\HreflangTags',
+			'getGetParametersForProducts'
+		);
+
+See the implementation in :download:`the example script (EXT:bgm_hreflang/Documentation/Example/Products.php) <Example/Products.php>`.
+Don't forget to connect the detail view pages in the backend! This class just adds the necessary GET parameters.

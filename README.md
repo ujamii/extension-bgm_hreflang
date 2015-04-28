@@ -1,15 +1,11 @@
 # TYPO3 Extension "bgm_hreflang"
 
-Redaktionell bearbeitbare hreflang-Tags.
+<link rel="alternate" hreflang="" href="" /> tags for editors.
 
 ## Documentation
-Doku im Ordner EXT:bgm_hreflang/Documentation: https://gitlab.bgm-gmbh.de/bgm/extension-bgm_hreflang/blob/master/Documentation/Index.rst
+Documentation in EXT:bgm_hreflang/Documentation or http://docs.typo3.org/typo3cms/extensions/bgm_hreflang/
 
-Infos zu hreflang-Tags bei Google: https://support.google.com/webmasters/answer/189077
+More information about hreflang tags at Google: https://support.google.com/webmasters/answer/189077
 
-## git
-Die Extension bgm_hreflang wird in einem eigenen git-Repository verwaltet
-
-git-Repository: https://gitlab.bgm-gmbh.de/bgm/extension-bgm_hreflang﻿
-
-Für TYPO3 6.1 + 6.2: branch master
+## Installation
+From TER: http://typo3.org/extensions/repository/view/bgm_hreflang
