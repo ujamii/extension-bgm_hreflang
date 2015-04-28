@@ -73,7 +73,7 @@ $tempColumns = array(
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('pages', $tempColumns, 1);
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('pages', 'tx_bgmhreflang', 'tx_bgmhreflang_1,--linebreak--,tx_bgmhreflang_2,--linebreak--,tx_bgmhreflang_list');
 $GLOBALS['TCA']['pages']['palettes']['tx_bgmhreflang']['canNotCollapse'] = 1;
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('pages', '--palette--;LLL:EXT:bgm_theme_zarges/Resources/Private/Language/Backend.xml:pages.palette.tx_bgmhreflang;tx_bgmhreflang;;', '', 'after:lastUpdated');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('pages', '--palette--;LLL:EXT:bgm_hreflang/Resources/Private/Language/Backend.xml:pages.palette.tx_bgmhreflang;tx_bgmhreflang;;', '', 'after:lastUpdated');
 
 $GLOBALS['TCA']['pages']['ctrl']['setToDefaultOnCopy'] = ($GLOBALS['TCA']['pages']['ctrl']['setToDefaultOnCopy'] ? $GLOBALS['TCA']['pages']['ctrl']['setToDefaultOnCopy'] . ',' : '') . 'tx_bgmhreflang_1,tx_bgmhreflang_2';
 ?>
