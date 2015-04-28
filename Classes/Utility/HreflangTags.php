@@ -108,7 +108,11 @@ class HreflangTags {
 
 			foreach ($relations as $this->relatedPage => $info) {
 				foreach ($info['hreflangAttributes'] as $this->hreflangAttribute) {
-					$this->getParameters['L'] = $this->hreflangAttribute['sysLanguageUid'];
+					unset($this->getParameters['id']);
+					unset($this->getParameters['L']);
+					if(intval($this->hreflangAttribute['sysLanguageUid']) > 0){
+						$this->getParameters['L'] = $this->hreflangAttribute['sysLanguageUid'];
+					}
 					$signalSlotDispatcher->dispatch(__CLASS__, 'frontend_beforeRenderSingleTag', array($this));
 					$this->renderedListItem = '<link rel="alternate" hreflang="' . $this->hreflangAttribute['hreflangAttribute'] . '" href="' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($GLOBALS['TSFE']->cObj->currentPageUrl($this->getParameters, $this->relatedPage)) . '" />';
 					$signalSlotDispatcher->dispatch(__CLASS__, 'frontend_afterRenderSingleTag', array($this));
