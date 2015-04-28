@@ -66,9 +66,9 @@ class HreflangTags {
 				$signalSlotDispatcher->dispatch(__CLASS__, 'backend_beforeRenderSinglePage', array($this));
 				$this->renderedListItem = '<li>' . \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordPath($this->relatedPage, '', 1000) . ' [' . $this->relatedPage . ']';
 				$hreflangAttributes = array();
-				foreach ($info['hreflangAttributes'] as $sysLanguageUid => $this->hreflangAttribute) {
+				foreach ($info['hreflangAttributes'] as $this->hreflangAttribute) {
 					$signalSlotDispatcher->dispatch(__CLASS__, 'backend_beforeRenderSingleHreflangAttribute', array($this));
-					$hreflangAttributes[] = '<li>' . $this->hreflangAttribute . '</li>';
+					$hreflangAttributes[] = '<li>' . $this->hreflangAttribute['hreflangAttribute'] . '</li>';
 					$signalSlotDispatcher->dispatch(__CLASS__, 'backend_afterRenderSingleHreflangAttribute', array($this));
 				}
 				if (count($hreflangAttributes) > 0) {
@@ -105,11 +105,12 @@ class HreflangTags {
 			$GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'] = 1;
 
 			$relations = $this->getCachedRelations($GLOBALS['TSFE']->id);
+
 			foreach ($relations as $this->relatedPage => $info) {
-				foreach ($info['hreflangAttributes'] as $sysLanguageUid => $this->hreflangAttribute) {
-					$this->getParameters['L'] = $sysLanguageUid;
+				foreach ($info['hreflangAttributes'] as $this->hreflangAttribute) {
+					$this->getParameters['L'] = $this->hreflangAttribute['sysLanguageUid'];
 					$signalSlotDispatcher->dispatch(__CLASS__, 'frontend_beforeRenderSingleTag', array($this));
-					$this->renderedListItem = '<link rel="alternate" hreflang="' . $this->hreflangAttribute . '" href="' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($GLOBALS['TSFE']->cObj->currentPageUrl($this->getParameters, $this->relatedPage)) . '" />';
+					$this->renderedListItem = '<link rel="alternate" hreflang="' . $this->hreflangAttribute['hreflangAttribute'] . '" href="' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($GLOBALS['TSFE']->cObj->currentPageUrl($this->getParameters, $this->relatedPage)) . '" />';
 					$signalSlotDispatcher->dispatch(__CLASS__, 'frontend_afterRenderSingleTag', array($this));
 					$renderedList[] = $this->renderedListItem;
 				}
@@ -273,18 +274,30 @@ class HreflangTags {
 		$countryMapping = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'][intval($rootPageId)];
 		$defaultCountryId = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['defaultCountryId'];
 
-		$hreflangAttributes[] = ($rootPageId == $defaultCountryId ? 'x-default' : $countryMapping['languageMapping'][0] . '-' . $countryMapping['countryCode']);
+		$hreflangAttributes[] = array(
+			'hreflangAttribute' => ($rootPageId == $defaultCountryId ? 'x-default' : $countryMapping['languageMapping'][0] . '-' . $countryMapping['countryCode']),
+			'sysLanguageUid' => 0,
+		);
 
 		$translations = array_keys($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('sys_language_uid', 'pages_language_overlay', 'pid=' . intval($pageId) . ' AND deleted+hidden=0 ', '', '', '', 'sys_language_uid'));
 		foreach ($translations as $translation) {
-			$hreflangAttributes[] = $countryMapping['languageMapping'][$translation] . ($rootPageId == $defaultCountryId ? '' : '-' . $countryMapping['countryCode']);
+			$hreflangAttributes[] = array(
+				'hreflangAttribute' => $countryMapping['languageMapping'][$translation] . ($rootPageId == $defaultCountryId ? '' : '-' . $countryMapping['countryCode']),
+				'sysLanguageUid' => $translation,
+			);
 		}
 
 		if($countryMapping['additionalCountries']){
 			foreach($countryMapping['additionalCountries'] as $additionalCountry){
-				$hreflangAttributes[] = $countryMapping['languageMapping'][0] . '-' . $additionalCountry;
+				$hreflangAttributes[] = array(
+					'hreflangAttribute' => $countryMapping['languageMapping'][0] . '-' . $additionalCountry,
+					'sysLanguageUid' => 0,
+				);
 				foreach ($translations as $translation) {
-					$hreflangAttributes[] = $countryMapping['languageMapping'][$translation] . '-' . $additionalCountry;
+					$hreflangAttributes[] = array(
+						'hreflangAttribute' => $countryMapping['languageMapping'][$translation] . '-' . $additionalCountry,
+						'sysLanguageUid' => $translation,
+					);
 				}
 			}
 		}
