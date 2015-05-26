@@ -4,6 +4,11 @@ namespace BGM\BgmHreflang\Utility;
 class HreflangTags {
 
 	/**
+	 * @var \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+	 */
+	protected $cacheInstance;
+
+	/**
 	 * t3lib_page object for finding rootline on the fly
 	 *
 	 * @var \TYPO3\CMS\Frontend\Page\PageRepository
@@ -11,39 +16,53 @@ class HreflangTags {
 	protected $sysPage;
 
 	/**
+	 * current $_GET parameters
+	 *
 	 * @var array
+	 * @see renderBackendList(), renderFrontendList()
 	 */
 	protected $getParameters;
 
 	/**
+	 * current related page
+	 *
 	 * @var integer
+	 * @see renderBackendList(), renderFrontendList()
 	 */
 	protected $relatedPage;
 
 	/**
+	 * current hreflang attribute for the related page
+	 *
 	 * @var string
+	 * @see renderBackendList(), renderFrontendList()
 	 */
 	protected $hreflangAttribute;
 
 	/**
+	 * curent hreflang attributes for the related page
+	 *
 	 * @var array
+	 * @see renderBackendList(), renderFrontendList()
 	 */
 	protected $hreflangAttributes;
 
 	/**
-	 * @var string
+	 * additional parameters for the current hreflang attribute $hreflangAttribute.
+	 * contains the keys sysLanguageUid and mountPoint
+	 *
+	 * @var array
+	 * @see renderBackendList(), renderFrontendList()
 	 */
-	protected $hrefAttribute;
+	protected $additionalParameters;
 
 	/**
+	 * rendered item
+	 *
 	 * @var string
+	 * @see renderBackendList(), renderFrontendList()
 	 */
 	protected $renderedListItem;
-
-	/**
-	 * @var \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
-	 */
-	protected $cacheInstance;
 
 	public function __construct(){
 		$this->initializeCache();
@@ -58,21 +77,22 @@ class HreflangTags {
 	public function renderBackendList($conf, $formEngineObject){
 		$renderedList = '';
 		if(intval($conf['row']['uid']) > 0) {
-			$relations = $this->getCachedRelations($conf['row']['uid']);
 			/** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
 			$signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
+
+			$relations = $this->getCachedRelations($conf['row']['uid']);
 
 			foreach($relations as $this->relatedPage => $info){
 				$signalSlotDispatcher->dispatch(__CLASS__, 'backend_beforeRenderSinglePage', array($this));
 				$this->renderedListItem = '<li>' . \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordPath($this->relatedPage, '', 1000) . ' [' . $this->relatedPage . ']';
-				$hreflangAttributes = array();
-				foreach ($info['hreflangAttributes'] as $this->hreflangAttribute) {
+				$this->hreflangAttributes = array();
+				foreach ($info as $this->hreflangAttribute => $this->additionalParameters) {
 					$signalSlotDispatcher->dispatch(__CLASS__, 'backend_beforeRenderSingleHreflangAttribute', array($this));
-					$hreflangAttributes[] = '<li>' . $this->hreflangAttribute['hreflangAttribute'] . '</li>';
+					$this->hreflangAttributes[] = '<li>' . $this->hreflangAttribute . (strlen($this->additionalParameters['mountPoint']) > 0 ? ' (MountPoint ' . $this->additionalParameters['mountPoint'] . ')' : '') . (intval($this->additionalParameters['sysLanguageUid']) > 0 ? ' (SysLanguageUid ' . $this->additionalParameters['sysLanguageUid'] . ')': '') .'</li>';
 					$signalSlotDispatcher->dispatch(__CLASS__, 'backend_afterRenderSingleHreflangAttribute', array($this));
 				}
-				if (count($hreflangAttributes) > 0) {
-					$this->renderedListItem .= '<ul style="list-style:disc inside; margin-left: 20px;">' . implode($hreflangAttributes) . '</ul>';
+				if (count($this->hreflangAttributes) > 0) {
+					$this->renderedListItem .= '<ul style="list-style:disc inside; margin-left: 20px;">' . implode($this->hreflangAttributes) . '</ul>';
 				}
 				$this->renderedListItem .= '</li>';
 				$signalSlotDispatcher->dispatch(__CLASS__, 'backend_afterRenderSinglePage', array($this));
@@ -93,38 +113,40 @@ class HreflangTags {
 	 * @return string
 	 */
 	public function renderFrontendList($content, $conf){
-		$renderedList = array();
+		$renderedListItems = array();
 		if (intval($GLOBALS['TSFE']->id) > 0) {
 			/** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
 			$signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
-			$this->getParameters = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET();
 
-			// disable the mountpoint rendering
-			unset($this->getParameters['MP']);
-			$mpdisable = $GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'];
-			$GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'] = 1;
+			$this->getParameters = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET();
 
 			$relations = $this->getCachedRelations($GLOBALS['TSFE']->id);
 
+			$mpdisable = $GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'];
+			$GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'] = 1;
 			foreach ($relations as $this->relatedPage => $info) {
-				foreach ($info['hreflangAttributes'] as $this->hreflangAttribute) {
+				foreach ($info as $this->hreflangAttribute => $this->additionalParameters) {
 					unset($this->getParameters['id']);
 					unset($this->getParameters['L']);
 					if(intval($this->hreflangAttribute['sysLanguageUid']) > 0){
-						$this->getParameters['L'] = $this->hreflangAttribute['sysLanguageUid'];
+						$this->getParameters['L'] = $this->additionalParameters['sysLanguageUid'];
 					}
+					unset($this->getParameters['MP']);
+					if(strlen($this->additionalParameters['mountPoint']) > 0){
+						$this->getParameters['MP'] = $this->additionalParameters['mountPoint'];
+					}
+
 					$signalSlotDispatcher->dispatch(__CLASS__, 'frontend_beforeRenderSingleTag', array($this));
-					$this->renderedListItem = '<link rel="alternate" hreflang="' . $this->hreflangAttribute['hreflangAttribute'] . '" href="' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($GLOBALS['TSFE']->cObj->currentPageUrl($this->getParameters, $this->relatedPage)) . '" />';
+					$this->renderedListItem = '<link rel="alternate" hreflang="' . $this->hreflangAttribute . '" href="' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($GLOBALS['TSFE']->cObj->currentPageUrl($this->getParameters, $this->relatedPage)) . '" />';
 					$signalSlotDispatcher->dispatch(__CLASS__, 'frontend_afterRenderSingleTag', array($this));
-					$renderedList[] = $this->renderedListItem;
+					$renderedListItems[] = $this->renderedListItem;
 				}
 			}
-
-			// enable mountpoint rendering
+			sort($renderedListItems);
 			$GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'] = $mpdisable;
 		}
 
-		return $content . "\n" . implode($renderedList, "\n") . "\n";
+		return $content . "\n" . implode($renderedListItems, "\n") . "\n";
 	}
 
 	/**
@@ -184,17 +206,17 @@ class HreflangTags {
 	}
 
 	/**
-	 * @param string $hrefAttribute
+	 * @param string $additionalParameters
 	 */
-	public function setHrefAttribute($hrefAttribute){
-		$this->hrefAttribute = $hrefAttribute;
+	public function setAdditionalParameters($additionalParameters){
+		$this->additionalParameters = $additionalParameters;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getHrefAttribute() {
-		return $this->hrefAttribute;
+	public function getAdditionalParameters() {
+		return $this->additionalParameters;
 	}
 
 	/**
@@ -218,22 +240,27 @@ class HreflangTags {
 	 * @return array $relations
 	 */
 	public function getCachedRelations($pageId){
-		// If $relations is empty array, it hasn't been cached. Calculate the value and store it in the cache:
-		$relationsFromCache = $this->cacheInstance->getByTag('pageId_' . $pageId);
-		if(count($relationsFromCache)>0 && $relationsFromCache[0][$pageId]['hreflangAttributes']){
+		// get relations from cache
+		$cacheIdentifier = $pageId;
+		$cacheTag = 'pageId_' . $pageId;
+		$relationsFromCache = $this->cacheInstance->getByTag($cacheTag);
+		//Check, if the current page is already cached
+		if(count($relationsFromCache)>0 && is_array($relationsFromCache[0][$cacheIdentifier])){
 			$relations = $relationsFromCache[0];
 		} else {
+		// If $relationsFromCache is empty array, it hasn't been cached. Calculate the value and store it in the cache:
 			$relations = array();
 			$this->buildRelations($pageId, $relations);
-			//prepend each related page (= array_keys($relations)) with "pageId_" so this cache is cleared, when the
-			//corresponding page cache is cleared (@see EXT:core/Classes/DataHandling/DataHandler.php::clear_cache())
+			// prepend each related page (= array_keys($relations)) with "pageId_" and use this as tag. So this cache is
+			// cleared, when the corresponding page cache is cleared
+			// @see EXT:core/Classes/DataHandling/DataHandler.php::clear_cache()
 			$tags = array_map(function ($value) {
 				return 'pageId_' . $value;
 			}, array_keys($relations));
 			foreach($tags as $tag){
 				$this->cacheInstance->flushByTag($tag);
 			}
-			$this->cacheInstance->set($pageId, $relations, $tags, 84000);
+			$this->cacheInstance->set($cacheIdentifier, $relations, $tags, 84000);
 		}
 
 		return $relations;
@@ -246,7 +273,7 @@ class HreflangTags {
 	 * @param array $relations
 	 */
 	protected function buildRelations($pageId, &$relations) {
-		$relations[$pageId]['hreflangAttributes'] = $this->buildHreflangAttributes($pageId);
+		$relations[$pageId] = $this->buildHreflangAttributes($pageId);
 
 		$directRelations = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tx_bgmhreflang_page_page_mm', 'uid_local=' . intval($pageId) . '');
 		for ($i = 0; $i < count($directRelations); $i++) {
@@ -266,42 +293,53 @@ class HreflangTags {
 	/**
 	 * Get the hreflangattributes for the default language and all translations of $pageId
 	 *
-	 * @TODO: Check if $rootPageId is correct in FE
 	 * @param integer $pageId
+	 * @param string $mountPoint
 	 * @return array $hreflangAttributes
 	 */
-	protected function buildHreflangAttributes($pageId) {
+	protected function buildHreflangAttributes($pageId, $mountPoint='') {
 		$hreflangAttributes = array();
 
-		$rootPageId = $this->getRootPageId($pageId);
+		$rootline = $this->getRootLine($pageId, $mountPoint);
+		$rootPageId = $this->getRootPageId($rootline);
 
 		$countryMapping = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'][intval($rootPageId)];
 		$defaultCountryId = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['defaultCountryId'];
 
-		$hreflangAttributes[] = array(
-			'hreflangAttribute' => ($rootPageId == $defaultCountryId ? 'x-default' : $countryMapping['languageMapping'][0] . '-' . $countryMapping['countryCode']),
+		$hreflangAttributes[($rootPageId == $defaultCountryId ? 'x-default' : $countryMapping['languageMapping'][0] . '-' . $countryMapping['countryCode'])] = array(
 			'sysLanguageUid' => 0,
+			'mountPoint' => $mountPoint,
 		);
 
 		$translations = array_keys($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('sys_language_uid', 'pages_language_overlay', 'pid=' . intval($pageId) . ' AND deleted+hidden=0 ', '', '', '', 'sys_language_uid'));
 		foreach ($translations as $translation) {
-			$hreflangAttributes[] = array(
-				'hreflangAttribute' => $countryMapping['languageMapping'][$translation] . ($rootPageId == $defaultCountryId ? '' : '-' . $countryMapping['countryCode']),
+			$hreflangAttributes[$countryMapping['languageMapping'][$translation] . ($rootPageId == $defaultCountryId ? '' : '-' . $countryMapping['countryCode'])] = array(
 				'sysLanguageUid' => $translation,
+				'mountPoint' => $mountPoint,
 			);
 		}
 
 		if($countryMapping['additionalCountries']){
 			foreach($countryMapping['additionalCountries'] as $additionalCountry){
-				$hreflangAttributes[] = array(
-					'hreflangAttribute' => $countryMapping['languageMapping'][0] . '-' . $additionalCountry,
+				$hreflangAttributes[$countryMapping['languageMapping'][0] . '-' . $additionalCountry] = array(
 					'sysLanguageUid' => 0,
+					'mountPoint' => $mountPoint,
 				);
 				foreach ($translations as $translation) {
-					$hreflangAttributes[] = array(
-						'hreflangAttribute' => $countryMapping['languageMapping'][$translation] . '-' . $additionalCountry,
+					$hreflangAttributes[$countryMapping['languageMapping'][$translation] . '-' . $additionalCountry] = array(
 						'sysLanguageUid' => $translation,
+						'mountPoint' => $mountPoint,
 					);
+				}
+			}
+		}
+
+		if(strlen($mountPoint) == 0){ //@TODO nested mountpoints are to expensive
+			//check, if the current page is mounted somewhere
+			$mountPoints = $this->getMountpoints($rootline);
+			if(count($mountPoints) > 0){
+				foreach($mountPoints as $mountPoint){
+					$hreflangAttributes = array_merge($hreflangAttributes, $this->buildHreflangAttributes($pageId, $mountPoint['mountPoint']));
 				}
 			}
 		}
@@ -316,23 +354,49 @@ class HreflangTags {
 	}
 
 	/**
-	 * @param integer $pageId
-	 * @return integer mixed
+	 * Search for pages in the $rootline, which are mounted somewhere and return an array with mpvars
+	 *
+	 * @param array $rootline
+	 * @return mixed
 	 */
-	protected function getRootPageId($pageId){
-		if (TYPO3_MODE == 'BE') {
-			$rootline = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($pageId);
-		} else {
-			$this->createSysPageIfNecessary();
-			$rootline = $this->sysPage->getRootLine($pageId);
+	protected function getMountPoints($rootline){
+		$rootlineIds = array();
+		foreach($rootline as $page){
+			$rootlineIds[] = $page['uid'];
 		}
+		$mountPoints = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('CONCAT(mount_pid, "-", uid) as mountPoint', 'pages', 'doktype = 7 AND mount_pid IN (' . implode(',', $rootlineIds) . ') AND deleted+hidden = 0');
+
+		return $mountPoints;
+	}
+
+	/**
+	 * Get the rootline for $pageId and $mountPoint (mpvar)
+	 *
+	 * @param integer $pageId
+	 * @param string $mountPoint
+	 * @return array
+	 */
+	protected function getRootLine($pageId, $mountPoint = ''){
+		$this->createSysPageIfNecessary();
+		$rootline = $this->sysPage->getRootLine($pageId, $mountPoint);
+
+		return $rootline;
+	}
+
+	/**
+	 * Search for the closest page with is_siteroot=1 in the rootline
+	 *
+	 * @param array $rootline
+	 * @return int
+	 */
+	protected function getRootPageId($rootline){
+		$rootPageId = 0;
 		foreach ($rootline as $rootlinePage) {
 			if (intval($rootlinePage['is_siteroot']) == 1) {
 				$rootPageId = $rootlinePage['uid'];
 				break;
 			}
 		}
-
 		return $rootPageId;
 	}
 
