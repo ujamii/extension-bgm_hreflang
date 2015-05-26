@@ -1,0 +1,15 @@
+
+
+2.0.0 - 2015/05/26
+------------------
+
+::
+
+	* 2015-05-26 [BUGFIX|FEATURE] Support for mountpoints
+	* 2015-05-26 [TASK] Update version number, update documentation, add changelog
+
+There have been some issues with mountpoints. There can be wrong entries in your tx_realurl_pathcache table because of
+this! This release fixes them. But I had to refactor a lot, so  if you are using Signals/Slots there could be breaking
+changes. Test carefully!
+
+There is still one open TODO: Test, what happens when there are nested mountpoints.

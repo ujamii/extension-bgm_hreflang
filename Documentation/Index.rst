@@ -37,7 +37,7 @@ bgm hreflang
 		2015
 
 	:Author:
-		bgm websolutions GmbH & Co. KG
+		`bgm websolutions GmbH & Co. KG <http://typo3.bgm-gmbh.de/>`_ (Marco Huber)
 
 	:Email:
 		typo3@bgm-gmbh.de
@@ -65,4 +65,4 @@ bgm hreflang
 	Configuration/Index
 	Usage/Index
 	Developers/Index
-	Links/Index
+	Miscellaneous/Index
