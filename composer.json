@@ -1,0 +1,12 @@
+{
+  "autoload": {
+    "psr-4": {
+      "BGM\\BgmHreflang\\": "Classes/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "BGM\\BgmHreflang\\": "Classes/"
+    }
+  }
+}
