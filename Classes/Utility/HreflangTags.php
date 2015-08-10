@@ -418,17 +418,7 @@ class HreflangTags {
 	 * @return void
 	 */
 	protected function initializeCache() {
-		\TYPO3\CMS\Core\Cache\Cache::initializeCachingFramework();
-		try {
-			$this->cacheInstance = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('tx_bgmhreflang_cache');
-		} catch (\TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException $e) {
-			$this->cacheInstance = $GLOBALS['typo3CacheFactory']->create(
-				'tx_bgmhreflang_cache',
-				$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['tx_bgmhreflang_cache']['frontend'],
-				$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['tx_bgmhreflang_cache']['backend'],
-				$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['tx_bgmhreflang_cache']['options']
-			);
-		}
+		$this->cacheInstance = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('tx_bgmhreflang_cache');
 	}
 }
 
