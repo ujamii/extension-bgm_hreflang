@@ -128,7 +128,7 @@ class HreflangTags {
 				foreach ($info as $this->hreflangAttribute => $this->additionalParameters) {
 					unset($this->getParameters['id']);
 					unset($this->getParameters['L']);
-					if(intval($this->hreflangAttribute['sysLanguageUid']) > 0){
+					if(intval($this->additionalParameters['sysLanguageUid']) > 0){
 						$this->getParameters['L'] = $this->additionalParameters['sysLanguageUid'];
 					}
 					unset($this->getParameters['MP']);
