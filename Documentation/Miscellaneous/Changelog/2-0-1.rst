@@ -1,0 +1,10 @@
+
+
+2.0.1 - 2015/08/10
+------------------
+
+::
+
+	* 2015-08-10 [BUGFIX] Small bug with language code, Thanks to Sergio Catalá for reporting this issue (https://forge.typo3.org/issues/68851)
+
+There is still one open TODO: Test, what happens when there are nested mountpoints.
