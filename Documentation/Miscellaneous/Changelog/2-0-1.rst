@@ -6,5 +6,8 @@
 ::
 
 	* 2015-08-10 [BUGFIX] Small bug with language code, Thanks to Sergio Catalá for reporting this issue (https://forge.typo3.org/issues/68851)
+	* 2015-08-10 CachingFramework is initialized automatically. Function was removed since 7.2
+	* 2015-08-10 Raise TYPO3 Core dependency
+	* 2015-08-10 Add composer json to fix autoload problems
 
 There is still one open TODO: Test, what happens when there are nested mountpoints.
