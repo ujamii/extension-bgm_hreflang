@@ -1,0 +1,13 @@
+
+
+2.0.1 - 2015/08/10
+------------------
+
+::
+
+	* 2015-08-31 [TASK] Add a signal to manipulate full tag list. Thanks to Sergio Catalá for reporting this issue (https://forge.typo3.org/issues/69122)
+	* 2015-08-31 [BUGFIX] Use hreflangAttributes from Signal
+	* 2015-08-31 [TASK] Initialize SignalSlot dispatcher in constructor
+	* 2015-08-31 [TASK] Update version number, update documentation, add changelog
+
+There is still one open TODO: Test, what happens when there are nested mountpoints.
