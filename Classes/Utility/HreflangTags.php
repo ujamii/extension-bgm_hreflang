@@ -348,10 +348,10 @@ class HreflangTags {
 	 *
 	 * @param integer $pageId
 	 * @param string $mountPoint
-	 * @return array $hreflangAttributes
+	 * @return array $this->hreflangAttributes
 	 */
 	protected function buildHreflangAttributes($pageId, $mountPoint='') {
-		$hreflangAttributes = array();
+		$this->hreflangAttributes = array();
 
 		$rootline = $this->getRootLine($pageId, $mountPoint);
 		$rootPageId = $this->getRootPageId($rootline);
@@ -359,14 +359,14 @@ class HreflangTags {
 		$countryMapping = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'][intval($rootPageId)];
 		$defaultCountryId = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['defaultCountryId'];
 
-		$hreflangAttributes[($rootPageId == $defaultCountryId ? 'x-default' : $countryMapping['languageMapping'][0] . '-' . $countryMapping['countryCode'])] = array(
+		$this->hreflangAttributes[($rootPageId == $defaultCountryId ? 'x-default' : $countryMapping['languageMapping'][0] . '-' . $countryMapping['countryCode'])] = array(
 			'sysLanguageUid' => 0,
 			'mountPoint' => $mountPoint,
 		);
 
 		$translations = array_keys($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('sys_language_uid', 'pages_language_overlay', 'pid=' . intval($pageId) . ' AND deleted+hidden=0 ', '', '', '', 'sys_language_uid'));
 		foreach ($translations as $translation) {
-			$hreflangAttributes[$countryMapping['languageMapping'][$translation] . ($rootPageId == $defaultCountryId ? '' : '-' . $countryMapping['countryCode'])] = array(
+			$this->hreflangAttributes[$countryMapping['languageMapping'][$translation] . ($rootPageId == $defaultCountryId ? '' : '-' . $countryMapping['countryCode'])] = array(
 				'sysLanguageUid' => $translation,
 				'mountPoint' => $mountPoint,
 			);
@@ -374,12 +374,12 @@ class HreflangTags {
 
 		if($countryMapping['additionalCountries']){
 			foreach($countryMapping['additionalCountries'] as $additionalCountry){
-				$hreflangAttributes[$countryMapping['languageMapping'][0] . '-' . $additionalCountry] = array(
+				$this->hreflangAttributes[$countryMapping['languageMapping'][0] . '-' . $additionalCountry] = array(
 					'sysLanguageUid' => 0,
 					'mountPoint' => $mountPoint,
 				);
 				foreach ($translations as $translation) {
-					$hreflangAttributes[$countryMapping['languageMapping'][$translation] . '-' . $additionalCountry] = array(
+					$this->hreflangAttributes[$countryMapping['languageMapping'][$translation] . '-' . $additionalCountry] = array(
 						'sysLanguageUid' => $translation,
 						'mountPoint' => $mountPoint,
 					);
@@ -392,18 +392,16 @@ class HreflangTags {
 			$mountPoints = $this->getMountpoints($rootline);
 			if(count($mountPoints) > 0){
 				foreach($mountPoints as $mountPoint){
-					$hreflangAttributes = array_merge($hreflangAttributes, $this->buildHreflangAttributes($pageId, $mountPoint['mountPoint']));
+					$this->hreflangAttributes = array_merge($this->hreflangAttributes, $this->buildHreflangAttributes($pageId, $mountPoint['mountPoint']));
 				}
 			}
 		}
-
-		$this->hreflangAttributes = $hreflangAttributes;
 
 		/** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
 		$signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
 		$signalSlotDispatcher->dispatch(__CLASS__, 'buildHreflangAttributes', array($this));
 
-		return $hreflangAttributes;
+		return $this->hreflangAttributes;
 	}
 
 	/**
