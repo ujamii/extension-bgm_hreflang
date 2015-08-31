@@ -64,6 +64,22 @@ class HreflangTags {
 	 */
 	protected $renderedListItem;
 
+	/**
+	 * rendered items
+	 *
+	 * @var array
+	 * @see renderBackendList(), renderFrontendList()
+	 */
+	protected $renderedListItems;
+
+	/**
+	 * rendered list
+	 *
+	 * @var string
+	 * @see renderBackendList(), renderFrontendList()
+	 */
+	protected $renderedList;
+
 	public function __construct(){
 		$this->initializeCache();
 	}
@@ -75,7 +91,8 @@ class HreflangTags {
 	 * @param $parentObject
 	 */
 	public function renderBackendList($conf, $formEngineObject){
-		$renderedList = '';
+		$this->renderedList = '';
+		$this->renderedListItems = array();
 		if(intval($conf['row']['uid']) > 0) {
 			/** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
 			$signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
@@ -96,13 +113,15 @@ class HreflangTags {
 				}
 				$this->renderedListItem .= '</li>';
 				$signalSlotDispatcher->dispatch(__CLASS__, 'backend_afterRenderSinglePage', array($this));
-				$renderedListItems[] = $this->renderedListItem;
+				$this->renderedListItems[] = $this->renderedListItem;
 			}
-			sort($renderedListItems);
-			$renderedList = '<ul>' . implode($renderedListItems) . '</ul>';
+			sort($this->renderedListItems);
+			$this->renderedList = '<ul>' . implode($this->renderedListItems) . '</ul>';
 		}
 
-		return $renderedList;
+		$signalSlotDispatcher->dispatch(__CLASS__, 'backend_afterRender', array($this));
+
+		return $this->renderedList;
 	}
 
 	/**
@@ -113,7 +132,8 @@ class HreflangTags {
 	 * @return string
 	 */
 	public function renderFrontendList($content, $conf){
-		$renderedListItems = array();
+		$this->renderedList = '';
+		$this->renderedListItems = array();
 		if (intval($GLOBALS['TSFE']->id) > 0) {
 			/** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
 			$signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
@@ -139,14 +159,19 @@ class HreflangTags {
 					$signalSlotDispatcher->dispatch(__CLASS__, 'frontend_beforeRenderSingleTag', array($this));
 					$this->renderedListItem = '<link rel="alternate" hreflang="' . $this->hreflangAttribute . '" href="' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($GLOBALS['TSFE']->cObj->currentPageUrl($this->getParameters, $this->relatedPage)) . '" />';
 					$signalSlotDispatcher->dispatch(__CLASS__, 'frontend_afterRenderSingleTag', array($this));
-					$renderedListItems[] = $this->renderedListItem;
+					$this->renderedListItems[] = $this->renderedListItem;
 				}
 			}
-			sort($renderedListItems);
+			sort($this->renderedListItems);
 			$GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'] = $mpdisable;
+			$this->renderedList = "\n" . implode($this->renderedListItems, "\n") . "\n";
 		}
 
-		return $content . "\n" . implode($renderedListItems, "\n") . "\n";
+		$this->renderedList = $content . $this->renderedList;
+
+		$signalSlotDispatcher->dispatch(__CLASS__, 'frontend_afterRender', array($this));
+
+		return $this->renderedList;
 	}
 
 	/**
@@ -231,6 +256,34 @@ class HreflangTags {
 	 */
 	public function getRenderedListItem() {
 		return $this->renderedListItem;
+	}
+
+	/**
+	 * @param array $renderedListItems
+	 */
+	public function setRenderedListItems($renderedListItems){
+		$this->renderedListItems = $renderedListItems;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getRenderedListItems() {
+		return $this->renderedListItems;
+	}
+
+	/**
+	 * @param string $renderedList
+	 */
+	public function setRenderedList($renderedList){
+		$this->renderedList = $renderedList;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRenderedList() {
+		return $this->renderedList;
 	}
 
 	/**
