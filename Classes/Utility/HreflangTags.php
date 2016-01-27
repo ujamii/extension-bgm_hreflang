@@ -313,7 +313,7 @@ class HreflangTags {
 			foreach($tags as $tag){
 				$this->cacheInstance->flushByTag($tag);
 			}
-			$this->cacheInstance->set($cacheIdentifier, $relations, $tags, 84000);
+			$this->cacheInstance->set((string) $cacheIdentifier, $relations, $tags, 84000);
 		}
 
 		return $relations;
