@@ -34,7 +34,7 @@ bgm hreflang
 		link,alternate,hreflang,tag,meta,seo
 
 	:Copyright:
-		2015
+		2016
 
 	:Author:
 		`bgm websolutions GmbH & Co. KG <http://typo3.bgm-gmbh.de/>`_ (Marco Huber)

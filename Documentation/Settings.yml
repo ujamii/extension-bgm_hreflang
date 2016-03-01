@@ -4,7 +4,7 @@
 
 ---
 conf.py:
-  copyright: 2015
+  copyright: 2016
   project: bgm hreflang
   version: 1.0
   release: 1.0.0

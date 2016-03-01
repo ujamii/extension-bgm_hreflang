@@ -1,19 +1,13 @@
 # TYPO3 Extension "bgm_hreflang"
 
-`<link rel="alternate" hreflang="" href="" />` tags for editors.
+An extension to add hreflang meta tags: `<link rel="alternate" hreflang="" href="" />`
 
-## Documentation
-Documentation in EXT:bgm_hreflang/Documentation
+Page translations are added automatically as hreflang tags.
 
-More information about hreflang tags at Google: https://support.google.com/webmasters/answer/189077
-
-### Attention on GitHub
-GitHub has problems with the code snippets in the documentation!
-
-## Installation
-From TER: http://typo3.org/extensions/repository/view/bgm_hreflang
+Editors can configure other pages in the page properties which should be added as hreflang tags.
 
 ## Links
+
 TER           http://typo3.org/extensions/repository/view/bgm_hreflang/
 
 Forge         http://forge.typo3.org/projects/extension-bgm_hreflang/
@@ -21,3 +15,14 @@ Forge         http://forge.typo3.org/projects/extension-bgm_hreflang/
 Documentation http://docs.typo3.org/typo3cms/extensions/bgm_hreflang/
 
 GitHub        https://github.com/bgmgmbh/extension-bgm_hreflang
+
+## Author
+
+This extension was created by Marco Huber and the bgm websolutions development team. 
+
+* <a href="https://twitter.com/mhuber84">@mhuber84</a>
+* mail@marco-huber.de
+* marco.huber@bgm-gmbh.de
+* <a href="http://typo3.bgm-gmbh.de">bgm Websolutions GmbH & Co. KG</a>
+
+Feel free to contribute and send in pull requests or create an issue.
