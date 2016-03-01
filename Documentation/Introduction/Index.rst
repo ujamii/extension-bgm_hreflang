@@ -11,7 +11,7 @@
 Introduction
 ============
 
-This is an extension to add hreflang meta tags: <link rel="alternate" hreflang="" href="" />
+This is an extension to add hreflang meta tags: `<link rel="alternate" hreflang="" href="" />`
 
 I call them hreflang tags! :-)
 

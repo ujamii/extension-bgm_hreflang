@@ -24,7 +24,7 @@ bgm hreflang
 		en
 
 	:Description:
-		An extension to add hreflang meta tags: <link rel="alternate" hreflang="" href="" />
+		An extension to add hreflang meta tags: `<link rel="alternate" hreflang="" href="" />`
 
 		Page translations are added automatically as hreflang tags.
 
