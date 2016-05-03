@@ -1,0 +1,16 @@
+
+
+2.0.3 - 2016/05/03
+------------------
+
+::
+
+	* 2016-01-27 Cast cacheIdentifier to string because the cache backend can't handle integers
+	* 2016-02-29 Add links to GitHub in the documentation
+	* 2016-03-01 Cleanup documentation
+	* 2016-03-01 Update documentation
+	* 2016-05-03 Raise TYPO3 Core dependency
+	* 2016-05-03 [BUGFIX] Set default cache group
+	* 2016-05-03 Fix typo in changelog
+
+There is still one open TODO: Test, what happens when there are nested mountpoints.
