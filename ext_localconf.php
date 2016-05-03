@@ -13,7 +13,7 @@ if (version_compare(TYPO3_branch, '6.2', '<')) {
 	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc'][] = 'EXT:bgm_hreflang/Classes/Hooks/ClearCacheHook.php:&BGM\\BgmHreflang\\Hooks\\ClearCacheHook->clear';
 } else {
 	if (!isset($TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations']['tx_bgmhreflang_cache']['groups'])) {
-		$TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations']['tx_bgmhreflang_cache']['groups'] = 'all,pages';
+		$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['tx_bgmhreflang_cache']['groups'] = array('pages', 'all');
 	}
 }
 
