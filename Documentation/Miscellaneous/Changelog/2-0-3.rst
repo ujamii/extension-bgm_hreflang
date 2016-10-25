@@ -14,5 +14,6 @@
 	* 2016-05-03 Fix typo in changelog
 	* 2016-10-25 Update changelog
 	* 2016-10-25 Fix caching configuration
+	* 2016-10-25 Update dependency and version; Deploy to TER
 
 There is still one open TODO: Test, what happens when there are nested mountpoints.
