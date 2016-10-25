@@ -13,5 +13,6 @@
 	* 2016-05-03 [BUGFIX] Set default cache group
 	* 2016-05-03 Fix typo in changelog
 	* 2016-10-25 Update changelog
+	* 2016-10-25 Fix caching configuration
 
 There is still one open TODO: Test, what happens when there are nested mountpoints.
