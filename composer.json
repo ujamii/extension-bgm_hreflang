@@ -1,12 +1,27 @@
 {
-  "autoload": {
-    "psr-4": {
-      "BGM\\BgmHreflang\\": "Classes/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "BGM\\BgmHreflang\\": "Classes/"
-    }
-  }
+	"name": "bgm/bgm_hreflang",
+	"description": "An extension to add hreflang meta tags. Page translations are added automatically as hreflang tags. Editors can configure other pages in the page properties which should be added as hreflang tags.",
+	"type": "typo3-cms-extension",
+	"version": "2.0.3",
+	"keywords": [
+		"typo3",
+		"extension"
+	],
+	"authors": [
+		{
+			"name": "Marco Huber",
+			"homepage": "http://typo3.bgm-gmbh.de"
+		}
+	],
+	"minimum-stability": "dev",
+	"autoload": {
+		"psr-4": {
+			"BGM\\BgmHreflang\\": "Classes/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"BGM\\BgmHreflang\\": "Classes/"
+		}
+	}
 }
