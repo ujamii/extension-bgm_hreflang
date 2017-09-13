@@ -1,0 +1,10 @@
+
+
+2.0.5 - 2017/09/13
+------------------
+
+::
+
+   * 2017-09-13 [BUGFIX] Fix hreflang tags to default language
+
+There is still one open TODO: Test, what happens when there are nested mountpoints.

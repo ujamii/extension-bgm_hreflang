@@ -144,12 +144,16 @@ class HreflangTags {
 
 			$mpdisable = $GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'];
 			$GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'] = 1;
+			$linkVarsConfig = $GLOBALS['TSFE']->config['config']['linkVars'];
+			$GLOBALS['TSFE']->config['config']['linkVars'] = implode(',', array_diff(\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $linkVarsConfig), array('L')));
+			$linkVars = $GLOBALS['TSFE']->linkVars;
+			$GLOBALS['TSFE']->linkVars = implode('&', array_diff(\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('&', $linkVars), array('L='. $GLOBALS['TSFE']->sys_language_uid)));
 			foreach ($relations as $this->relatedPage => $info) {
 				foreach ($info as $this->hreflangAttribute => $this->additionalParameters) {
 					unset($this->getParameters['id']);
 					unset($this->getParameters['L']);
 					if(intval($this->additionalParameters['sysLanguageUid']) > 0){
-						$this->getParameters['L'] = $this->additionalParameters['sysLanguageUid'];
+						$this->getParameters['L'] = intval($this->additionalParameters['sysLanguageUid']);
 					}
 					unset($this->getParameters['MP']);
 					if(strlen($this->additionalParameters['mountPoint']) > 0){
@@ -164,6 +168,8 @@ class HreflangTags {
 			}
 			sort($this->renderedListItems);
 			$GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'] = $mpdisable;
+			$GLOBALS['TSFE']->config['config']['linkVars'] = $linkVarsConfig;
+			$GLOBALS['TSFE']->linkVars = $linkVars;
 			$this->renderedList = "\n" . implode($this->renderedListItems, "\n") . "\n";
 		}
 
