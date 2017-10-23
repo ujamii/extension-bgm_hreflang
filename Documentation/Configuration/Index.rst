@@ -38,6 +38,10 @@ The configuration is done in the AdditionalConfiguration.php or your Theme-Exten
 			//'$languageMapping + array(0 => isolanguagecode)' can be assigned more than once with the same "isolanguagecode" in the array countryMapping.
 			'languageMapping' => $languageMapping + array(0 => isolanguagecode),
 
+			//This optional 'domainName' can be assigned, if you would like to prepend a certain domain name before your urls.
+			//It overrides an automatically assigned domain from the typolink function.
+			'domainName' => 'https://www.domain.tld',
+
 			//This is optional. You need this, if you want the Germany country branch to be used as Austrian country branch, too.
 			'additionalCountries' => array(isocountrycode, isocountrycode, ...),
 		),
@@ -46,15 +50,18 @@ The configuration is done in the AdditionalConfiguration.php or your Theme-Exten
 		61 => array( //International
 			'countryCode' => 'en',
 			'languageMapping' => $languageMapping + array(0 => 'en'),
+			'domainName' => 'https://www.my-domain.com',
 		),
 		111 => array( //Germany and Austria
 			'countryCode' => 'de',
 			'languageMapping' => $languageMapping + array(0 => 'de'),
 			'additionalCountries' => array('at'),
+			'domainName' => 'https://www.my-domain.de',
 		),
 		161 => array( //Switzerland
 			'countryCode' => 'ch',
 			'languageMapping' => $languageMapping + array(0 => 'de'),
+			'domainName' => 'https://www.my-domain.it',
 		),
 		211 => array( //Italy
 			'countryCode' => 'it',

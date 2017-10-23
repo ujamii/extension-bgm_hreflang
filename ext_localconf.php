@@ -35,6 +35,8 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'] = array
 		'countryCode' => isocountrycode,
 		//"$languageMapping + array(0 => isolanguagecode)" can be assigned more than once with the same isolanguagecode as languageMapping in the array countryMapping.
 		'languageMapping' => $languageMapping + array(0 => isolanguagecode),
+		//domainName is optional
+		'domainName' => 'https://www.domain.tld',
 		//"additionalCountries" is optional
 		'additionalCountries' => array(isocountrycode2, isocountrycode3),
 	),
@@ -42,15 +44,18 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'] = array
 	12 => array( //International
 		'countryCode' => 'en',
 		'languageMapping' => $languageMapping + array(0 => 'en'),
+		'domainName' => 'https://www.my-domain.com',
 	),
 	34 => array( //Deutschland
 		'countryCode' => 'de',
 		'languageMapping' => $languageMapping + array(0 => 'de'),
 		'additionalCountries' => array('at', 'ch'),
+		'domainName' => 'https://www.my-domain.de',
 	),
 	56 => array( //UK
 		'countryCode' => 'gb',
 		'languageMapping' => $languageMapping + array(0 => 'en'),
+		'domainName' => 'https://www.my-domain.co.uk',
 	),
 	78 => array( //France
 		'countryCode' => 'fr',
