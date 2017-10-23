@@ -18,5 +18,8 @@
 		"psr-4": {
 			"BGM\\BgmHreflang\\": "Classes/"
 		}
+	},
+	"require": {
+		"typo3/cms-core": "^6.2.0 || >=7.6.0 <8"
 	}
 }
