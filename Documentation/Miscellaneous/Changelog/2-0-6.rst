@@ -1,0 +1,10 @@
+
+
+2.0.6 - 2017/10/24
+------------------
+
+::
+
+   * 2017-10-24 [BUGFIX] Check if domainName has a scheme
+
+There is still one open TODO: Test, what happens when there are nested mountpoints.

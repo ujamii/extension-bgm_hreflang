@@ -487,10 +487,17 @@ class HreflangTags {
 	 */
 	protected function buildLink() {
 		$link = $GLOBALS['TSFE']->cObj->currentPageUrl($this->getParameters, $this->relatedPage);
-		$linkParts = parse_url($link);
-		$linkParts['host'] = strlen($this->additionalParameters['domainName']) > 0 ? $this->additionalParameters['domainName'] : $linkParts['host'];
-		$link = $this->unparse_url($linkParts);
 		$link = \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($link);
+		if ($this->additionalParameters['domainName']) {
+			$linkParts = parse_url($link);
+			$domainParts = parse_url($this->additionalParameters['domainName']);
+			$linkParts['scheme'] = strlen($domainParts['scheme']) > 0 ? $domainParts['scheme'] : $linkParts['scheme'];
+			$linkParts['host'] = strlen($domainParts['host']) > 0 ? $domainParts['host'] : $linkParts['host'];
+			$linkParts['port'] = strlen($domainParts['port']) > 0 ? $domainParts['port'] : $linkParts['port'];
+			$linkParts['user'] = strlen($domainParts['user']) > 0 ? $domainParts['user'] : $linkParts['user'];
+			$linkParts['pass'] = strlen($domainParts['pass']) > 0 ? $domainParts['pass'] : $linkParts['pass'];
+			$link = $this->unparse_url($linkParts);
+		}
 		return $link;
 	}
 
