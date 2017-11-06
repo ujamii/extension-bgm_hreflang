@@ -142,8 +142,14 @@ class HreflangTags {
 
 			$relations = $this->getCachedRelations($GLOBALS['TSFE']->id);
 
+			$mpdefaultsConfig = $GLOBALS['TSFE']->config['config']['MP_defaults'];
+			$GLOBALS['TSFE']->config['config']['MP_defaults'] = '';
+			$mpdefaults = $GLOBALS['TSFE']->MP_defaults;
+			$GLOBALS['TSFE']->MP_defaults = array();
 			$mpdisable = $GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'];
 			$GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'] = 1;
+			$mpmaprootpoints = $GLOBALS['TSFE']->config['config']['MP_mapRootPoints'];
+			$GLOBALS['TSFE']->config['config']['MP_mapRootPoints'] = '';
 			$linkVarsConfig = $GLOBALS['TSFE']->config['config']['linkVars'];
 			$GLOBALS['TSFE']->config['config']['linkVars'] = implode(',', array_diff(\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $linkVarsConfig), array('L')));
 			$linkVars = $GLOBALS['TSFE']->linkVars;
@@ -167,7 +173,10 @@ class HreflangTags {
 				}
 			}
 			sort($this->renderedListItems);
+			$GLOBALS['TSFE']->config['config']['MP_defaults'] = $mpdefaultsConfig;
+			$GLOBALS['TSFE']->MP_defaults = $mpdefaults;
 			$GLOBALS['TSFE']->config['config']['MP_disableTypolinkClosestMPvalue'] = $mpdisable;
+			$GLOBALS['TSFE']->config['config']['MP_mapRootPoints'] = $mpmaprootpoints;
 			$GLOBALS['TSFE']->config['config']['linkVars'] = $linkVarsConfig;
 			$GLOBALS['TSFE']->linkVars = $linkVars;
 			$this->renderedList = "\n" . implode($this->renderedListItems, "\n") . "\n";
