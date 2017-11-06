@@ -6,5 +6,6 @@
 ::
 
    * 2017-10-24 [BUGFIX] Check if domainName has a scheme
+   * 2017-10-30 [TASK] Check if configuration for page language exists
 
 There is still one open TODO: Test, what happens when there are nested mountpoints.

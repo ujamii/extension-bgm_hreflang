@@ -367,34 +367,42 @@ class HreflangTags {
 		$domainName = (!empty($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'][intval($rootPageId)]['domainName']))?
 			$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'][intval($rootPageId)]['domainName'] :'';
 
-		$this->hreflangAttributes[($rootPageId == $defaultCountryId ? 'x-default' : $countryMapping['languageMapping'][0] . '-' . $countryMapping['countryCode'])] = array(
-			'sysLanguageUid' => 0,
-			'mountPoint' => $mountPoint,
-			'domainName' => $domainName,
-		);
-
-		$translations = array_keys($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('sys_language_uid', 'pages_language_overlay', 'pid=' . intval($pageId) . ' AND deleted+hidden=0 ', '', '', '', 'sys_language_uid'));
-		foreach ($translations as $translation) {
-			$this->hreflangAttributes[$countryMapping['languageMapping'][$translation] . ($rootPageId == $defaultCountryId ? '' : '-' . $countryMapping['countryCode'])] = array(
-				'sysLanguageUid' => $translation,
+		if($rootPageId == $defaultCountryId || isset($countryMapping['languageMapping'][0])) {
+			$this->hreflangAttributes[($rootPageId == $defaultCountryId ? 'x-default' : $countryMapping['languageMapping'][0] . '-' . $countryMapping['countryCode'])] = array(
+				'sysLanguageUid' => 0,
 				'mountPoint' => $mountPoint,
 				'domainName' => $domainName,
 			);
 		}
 
-		if($countryMapping['additionalCountries']){
-			foreach($countryMapping['additionalCountries'] as $additionalCountry){
-				$this->hreflangAttributes[$countryMapping['languageMapping'][0] . '-' . $additionalCountry] = array(
-					'sysLanguageUid' => 0,
+		$translations = array_keys($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('sys_language_uid', 'pages_language_overlay', 'pid=' . intval($pageId) . ' AND deleted+hidden=0 ', '', '', '', 'sys_language_uid'));
+		foreach ($translations as $translation) {
+			if(isset($countryMapping['languageMapping'][$translation])) {
+				$this->hreflangAttributes[$countryMapping['languageMapping'][$translation] . ($rootPageId == $defaultCountryId ? '' : '-' . $countryMapping['countryCode'])] = array(
+					'sysLanguageUid' => $translation,
 					'mountPoint' => $mountPoint,
 					'domainName' => $domainName,
 				);
-				foreach ($translations as $translation) {
-					$this->hreflangAttributes[$countryMapping['languageMapping'][$translation] . '-' . $additionalCountry] = array(
-						'sysLanguageUid' => $translation,
+			}
+		}
+
+		if($countryMapping['additionalCountries']){
+			foreach($countryMapping['additionalCountries'] as $additionalCountry){
+				if (isset($countryMapping['languageMapping'][0])) {
+					$this->hreflangAttributes[$countryMapping['languageMapping'][0] . '-' . $additionalCountry] = array(
+						'sysLanguageUid' => 0,
 						'mountPoint' => $mountPoint,
 						'domainName' => $domainName,
 					);
+				}
+				foreach ($translations as $translation) {
+					if (isset($countryMapping['languageMapping'][$translation])) {
+						$this->hreflangAttributes[$countryMapping['languageMapping'][$translation] . '-' . $additionalCountry] = array(
+							'sysLanguageUid' => $translation,
+							'mountPoint' => $mountPoint,
+							'domainName' => $domainName,
+						);
+					}
 				}
 			}
 		}
