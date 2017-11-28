@@ -17,6 +17,15 @@ if (version_compare(TYPO3_branch, '6.2', '<')) {
 	}
 }
 
+if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('realurl')) {
+    foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'] as $countryMapping) {
+        if (isset($countryMapping['domainName'])) {
+            $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl']['getHost'][] = 'EXT:bgm_hreflang/Classes/Hooks/RealUrlHostHook.php:&BGM\\BgmHreflang\\Hooks\\RealUrlHostHook->getHost';
+            break;
+        }
+    }
+}
+
 /**
  * DEMO CONFIGURATION
  */
