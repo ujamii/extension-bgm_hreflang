@@ -8,5 +8,6 @@
    * 2017-10-24 [BUGFIX] Check if domainName has a scheme
    * 2017-10-30 [TASK] Check if configuration for page language exists
    * 2017-11-07 [BUGFIX] Unset more mountpoint stuff before generating URLs
+   * 2017-11-28 [TASK] Show domainName in BE
 
 There is still one open TODO: Test, what happens when there are nested mountpoints.
