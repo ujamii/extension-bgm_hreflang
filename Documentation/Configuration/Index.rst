@@ -38,6 +38,15 @@ The configuration is done in the AdditionalConfiguration.php or your Theme-Exten
 			//'$languageMapping + array(0 => isolanguagecode)' can be assigned more than once with the same "isolanguagecode" in the array countryMapping.
 			'languageMapping' => $languageMapping + array(0 => isolanguagecode),
 
+			//This optional 'additionalGetParameters' can be assigned to every language of the current country
+			'additionalGetParameters' => array(
+				//"sys_language_uid" has to be unique in the array $additionalGetParameters!
+				sys_language_uid => isolanguagecode,
+
+				//Example
+				1 => '&foo=bar&john=doe', //append &foo=bar&john=doe to the link to sys_language 1 in this country
+			),
+
 			//This optional 'domainName' can be assigned, if you would like to prepend a certain domain name before your urls.
 			//It overrides an automatically assigned domain from the typolink function.
 			'domainName' => 'https://www.domain.tld',
@@ -50,11 +59,19 @@ The configuration is done in the AdditionalConfiguration.php or your Theme-Exten
 		61 => array( //International
 			'countryCode' => 'en',
 			'languageMapping' => $languageMapping + array(0 => 'en'),
+			'additionalGetParameters' => array(
+				1 => '&foo=bar&john=doe',
+			),
 			'domainName' => 'https://www.my-domain.com',
 		),
 		111 => array( //Germany and Austria
 			'countryCode' => 'de',
 			'languageMapping' => $languageMapping + array(0 => 'de'),
+			'additionalGetParameters' => array(
+				0 => '&foo=0',
+				1 => '&foo=1',
+				31 => '&foo=31',
+			),
 			'additionalCountries' => array('at'),
 			'domainName' => 'https://www.my-domain.de',
 		),

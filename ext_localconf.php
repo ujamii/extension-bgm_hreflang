@@ -44,6 +44,11 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'] = array
 		'countryCode' => isocountrycode,
 		//"$languageMapping + array(0 => isolanguagecode)" can be assigned more than once with the same isolanguagecode as languageMapping in the array countryMapping.
 		'languageMapping' => $languageMapping + array(0 => isolanguagecode),
+		//"additionalGetParameters" is optional
+		'additionalGetParameters' => array(
+			//"sys_language_uid" has to be unique in the array $additionalGetParameters!
+			sys_language_uid => isolanguagecode,
+		),
 		//domainName is optional
 		'domainName' => 'https://www.domain.tld',
 		//"additionalCountries" is optional
@@ -53,6 +58,9 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'] = array
 	12 => array( //International
 		'countryCode' => 'en',
 		'languageMapping' => $languageMapping + array(0 => 'en'),
+		'additionalGetParameters' => array(
+			1 => '&foo=bar',
+		),
 		'domainName' => 'https://www.my-domain.com',
 	),
 	34 => array( //Deutschland

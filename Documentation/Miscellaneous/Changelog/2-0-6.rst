@@ -10,5 +10,6 @@
    * 2017-11-07 [BUGFIX] Unset more mountpoint stuff before generating URLs
    * 2017-11-28 [TASK] Show domainName in BE
    * 2017-11-28 [TASK] Use Hook in RealUrl to set host depending on domainName
+   * 2017-11-28 [TASK] New option additionalGetParameters per country per lanugage
 
 There is still one open TODO: Test, what happens when there are nested mountpoints.
