@@ -25,6 +25,7 @@ $tempColumns = array(
 			'minitems' => 0,
 			'maxitems' => 9999,
 			'selectedListStyle' => 'width:400px;',
+			'show_thumbs' => 1,
 			'wizards' => array(
 				'_PADDING' => 0,
 				'_VERTICAL' => 0,
@@ -59,6 +60,7 @@ $tempColumns = array(
 			'maxitems' => 9999,
 			'selectedListStyle' => 'width:400px;',
 			'disable_controls' => 'browser',
+			'show_thumbs' => 1,
 		),
 	),
 	'tx_bgmhreflang_list' => array(
