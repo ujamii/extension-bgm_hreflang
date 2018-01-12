@@ -6,5 +6,6 @@
 ::
 
    * 2018-01-12 [TASK] Raise version number
+   * 2018-01-12 [TASK] Update documentation
 
 There is still one open TODO: Test, what happens when there are nested mountpoints.

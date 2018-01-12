@@ -34,13 +34,13 @@ bgm hreflang
 		link,alternate,hreflang,tag,meta,seo
 
 	:Copyright:
-		2016
+		2018
 
 	:Author:
 		`bgm websolutions GmbH & Co. KG <http://typo3.bgm-gmbh.de/>`_ (Marco Huber)
 
 	:Email:
-		typo3@bgm-gmbh.de
+		typo3@bgm-gmbh.de (marco.huber@bgm-gmbh.de)
 
 	:License:
 		This document is published under the Open Content License
