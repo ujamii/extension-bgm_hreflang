@@ -33,4 +33,12 @@
         <hidden>0</hidden>
         <sys_language_uid>1</sys_language_uid>
     </pages_language_overlay>
+    <pages_language_overlay>
+        <uid>5</uid>
+        <pid>18</pid>
+        <title>Schweiz-4 [FR]</title>
+        <deleted>0</deleted>
+        <hidden>0</hidden>
+        <sys_language_uid>2</sys_language_uid>
+    </pages_language_overlay>
 </dataset>

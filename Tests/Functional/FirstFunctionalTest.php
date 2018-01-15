@@ -129,4 +129,57 @@ class FirstFunctionalTest extends \Nimut\TestingFramework\TestCase\FunctionalTes
             trim($response->getContent())
         );
     }
+
+    /**
+     * Page "International-4" is not connected
+     *
+     * @test
+     */
+    public function international4PageOutput()
+    {
+
+        $response = $this->getFrontendResponse(7);
+        $this->assertEquals(
+            trim('
+<link rel="alternate" hreflang="x-default" href="https://www.my-domain.com/index.php?id=7" />
+            '),
+            trim($response->getContent())
+        );
+    }
+
+    /**
+     * Page "Deutschland-4" is not connected
+     *
+     * @test
+     */
+    public function deutschland4PageOutput()
+    {
+
+        $response = $this->getFrontendResponse(13);
+        $this->assertEquals(
+            trim('
+<link rel="alternate" hreflang="de-at" href="http://localhost/index.php?id=13" />
+<link rel="alternate" hreflang="de-de" href="http://localhost/index.php?id=13" />
+            '),
+            trim($response->getContent())
+        );
+    }
+
+    /**
+     * Page "Schweiz-4" is not connected
+     *
+     * @test
+     */
+    public function schweiz4PageOutput()
+    {
+
+        $response = $this->getFrontendResponse(18);
+        $this->assertEquals(
+            trim('
+<link rel="alternate" hreflang="de-ch" href="http://localhost/index.php?id=18&foo=bar" />
+<link rel="alternate" hreflang="fr-ch" href="http://localhost/index.php?id=18&L=2&foo=bar&john=doe" />
+            '),
+            trim($response->getContent())
+        );
+    }
 }
