@@ -7,5 +7,7 @@
 
    * 2018-01-12 [TASK] Raise version number
    * 2018-01-12 [TASK] Update documentation
+   * 2018-01-15 [TASK] Introduce Functional Tests
+   * 2018-01-15 [BUGFIX] Reset $this->getParameter for each link
 
 There is still one open TODO: Test, what happens when there are nested mountpoints.
