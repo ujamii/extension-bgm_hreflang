@@ -156,6 +156,7 @@ class HreflangTags {
 			$GLOBALS['TSFE']->linkVars = implode('&', array_diff(\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('&', $linkVars), array('L='. $GLOBALS['TSFE']->sys_language_uid)));
 			foreach ($relations as $this->relatedPage => $info) {
 				foreach ($info as $this->hreflangAttribute => $this->additionalParameters) {
+					$this->getParameters = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET();
 					unset($this->getParameters['id']);
 					unset($this->getParameters['L']);
 					if(intval($this->additionalParameters['sysLanguageUid']) > 0){
