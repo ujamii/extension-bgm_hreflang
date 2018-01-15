@@ -52,15 +52,3 @@ typo3_7lts php_7-0:
 typo3_7lts php_7-1:
   <<: *test_php
   image: php:7.1-alpine
-
-typo3_8lts php_7-0:
-  <<: *test_php
-  image: php:7.0-alpine
-  variables:
-    TYPO3_VERSION: ^8
-
-typo3_8lts php_7-1:
-  <<: *test_php
-  image: php:7.1-alpine
-  variables:
-    TYPO3_VERSION: ^8
