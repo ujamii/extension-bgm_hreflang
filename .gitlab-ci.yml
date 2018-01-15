@@ -37,29 +37,29 @@ variables:
   tags:
     - docker
 
-typo3_7lts 1/4:
+typo3_7lts php_5-5:
   <<: *test_php
   image: php:5.5-alpine
 
-typo3_7lts 2/4:
+typo3_7lts php_5-6:
   <<: *test_php
   image: php:5.6-alpine
 
-typo3_7lts 3/4:
+typo3_7lts php_7-0:
   <<: *test_php
   image: php:7.0-alpine
 
-typo3_7lts 4/4:
+typo3_7lts php_7-1:
   <<: *test_php
   image: php:7.1-alpine
 
-typo3_8lts 1/2:
+typo3_8lts php_7-0:
   <<: *test_php
   image: php:7.0-alpine
   variables:
     TYPO3_VERSION: ^8
 
-typo3_8lts 2/2:
+typo3_8lts php_7-1:
   <<: *test_php
   image: php:7.1-alpine
   variables:
