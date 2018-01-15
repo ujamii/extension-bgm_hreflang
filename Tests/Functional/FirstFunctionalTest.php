@@ -47,11 +47,13 @@ class FirstFunctionalTest extends \Nimut\TestingFramework\TestCase\FunctionalTes
         ),
     );
 
-    protected $fixturePath = ORIGINAL_ROOT . 'typo3conf/ext/bgm_hreflang/Tests/Functional/Fixtures/';
+    protected $fixturePath;
 
     protected function setUp()
     {
         parent::setUp();
+
+        $this->fixturePath = ORIGINAL_ROOT . 'typo3conf/ext/bgm_hreflang/Tests/Functional/Fixtures/';
 
         // Import own fixtures
         $this->importDataSet($this->fixturePath . 'Database/pages.xml');
