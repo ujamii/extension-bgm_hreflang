@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+	<tx_bgmhreflang_page_page_mm>
+		<uid_local>3</uid_local>
+		<uid_foreign>9</uid_foreign>
+		<tablenames>pages</tablenames>
+		<sorting>0</sorting>
+		<sorting_foreign>0</sorting_foreign>
+	</tx_bgmhreflang_page_page_mm>
+	<tx_bgmhreflang_page_page_mm>
+		<uid_local>3</uid_local>
+		<uid_foreign>15</uid_foreign>
+		<tablenames>pages</tablenames>
+		<sorting>1</sorting>
+		<sorting_foreign>0</sorting_foreign>
+	</tx_bgmhreflang_page_page_mm>
+	<tx_bgmhreflang_page_page_mm>
+		<uid_local>4</uid_local>
+		<uid_foreign>10</uid_foreign>
+		<tablenames>pages</tablenames>
+		<sorting>0</sorting>
+		<sorting_foreign>0</sorting_foreign>
+	</tx_bgmhreflang_page_page_mm>
+	<tx_bgmhreflang_page_page_mm>
+		<uid_local>6</uid_local>
+		<uid_foreign>12</uid_foreign>
+		<tablenames>pages</tablenames>
+		<sorting>0</sorting>
+		<sorting_foreign>0</sorting_foreign>
+	</tx_bgmhreflang_page_page_mm>
+	<tx_bgmhreflang_page_page_mm>
+		<uid_local>12</uid_local>
+		<uid_foreign>17</uid_foreign>
+		<tablenames>pages</tablenames>
+		<sorting>0</sorting>
+		<sorting_foreign>0</sorting_foreign>
+	</tx_bgmhreflang_page_page_mm>
+</dataset>
