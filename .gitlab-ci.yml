@@ -1,5 +1,5 @@
 cache:
-  key: "$CI_BUILD_REF_NAME/$CI_BUILD_STAGE"
+  key: "$CI_BUILD_REF_NAME-$CI_BUILD_STAGE"
   paths:
     - .composer/
 
