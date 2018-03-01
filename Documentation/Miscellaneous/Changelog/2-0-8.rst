@@ -1,0 +1,12 @@
+
+
+2.0.8 - 2018/01/15
+------------------
+
+::
+
+   * 2018-01-15 [TASK] Raise version number
+   * 2018-01-15 [TASK] No need to test TYPO3 8.7 in 7.6 branch
+   * 2018-03-11 [TASK] Remove composer.lock
+
+There is still one open TODO: Test, what happens when there are nested mountpoints.
