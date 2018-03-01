@@ -10,5 +10,6 @@
    * 2018-01-15 [TASK] Introduce Functional Tests
    * 2018-01-15 [BUGFIX] Reset $this->getParameter for each link
    * 2018-03-01 [TASK] Remove composer.lock
+   * 2018-03-01 [TASK] Fix GitLab CI cache key
 
 There is still one open TODO: Test, what happens when there are nested mountpoints.
