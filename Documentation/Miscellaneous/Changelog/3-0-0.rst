@@ -11,5 +11,6 @@
    * 2018-01-15 [BUGFIX] Reset $this->getParameter for each link
    * 2018-03-01 [TASK] Remove composer.lock
    * 2018-03-01 [TASK] Fix GitLab CI cache key
+   * 2018-03-21 [BREAKING] Drop TYPO3 7.6 support
 
 There is still one open TODO: Test, what happens when there are nested mountpoints.

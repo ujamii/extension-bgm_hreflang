@@ -8,7 +8,7 @@ variables:
   COMPOSER_CACHE_DIR: ".composer"
   COMPOSER_PROCESS_TIMEOUT: "1800"
   COMPOSER_ALLOW_SUPERUSER: "1"
-  TYPO3_VERSION: ^7.6
+  TYPO3_VERSION: ^8
   TYPO3_PATH_WEB: "$CI_PROJECT_DIR/.Build/Web"
   MYSQL_DATABASE: "typo3"
   MYSQL_ROOT_PASSWORD: "joh316"
@@ -35,22 +35,6 @@ variables:
     - find 'Tests/Functional' -wholename '*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; .Build/bin/phpunit --colors  -c .Build/vendor/nimut/testing-framework/res/Configuration/FunctionalTests.xml {}'
   tags:
     - docker
-
-typo3_7lts php_5-5:
-  <<: *test_php
-  image: php:5.5-alpine
-
-typo3_7lts php_5-6:
-  <<: *test_php
-  image: php:5.6-alpine
-
-typo3_7lts php_7-0:
-  <<: *test_php
-  image: php:7.0-alpine
-
-typo3_7lts php_7-1:
-  <<: *test_php
-  image: php:7.1-alpine
 
 typo3_8lts php_7-0:
   <<: *test_php
