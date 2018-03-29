@@ -12,5 +12,6 @@
    * 2018-03-01 [TASK] Remove composer.lock
    * 2018-03-01 [TASK] Fix GitLab CI cache key
    * 2018-03-21 [BREAKING] Drop TYPO3 7.6 support
+   * 2018-03-29 [TASK] add "validRelation" so we can control output in Signal/Slot backend_beforeRenderSingleHreflangAttribute and frontend_beforeRenderSingleTag
 
 There is still one open TODO: Test, what happens when there are nested mountpoints.

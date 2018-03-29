@@ -85,6 +85,14 @@ class HreflangTags {
 	 */
 	protected $renderedList;
 
+	/**
+	 * valid relation
+	 *
+	 * @var boolean
+	 * @see renderBackendList(), renderFrontendList()
+	 */
+	protected $validRelation;
+
 	public function __construct(){
 		$this->signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
 		$this->initializeCache();
@@ -107,8 +115,11 @@ class HreflangTags {
 				$this->renderedListItem = '<li>' . \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordPath($this->relatedPage, '', 1000) . ' [' . $this->relatedPage . ']';
 				$this->hreflangAttributes = array();
 				foreach ($info as $this->hreflangAttribute => $this->additionalParameters) {
+					$this->validRelation = true;
 					$this->signalSlotDispatcher->dispatch(__CLASS__, 'backend_beforeRenderSingleHreflangAttribute', array($this));
-					$this->hreflangAttributes[] = '<li>' . $this->hreflangAttribute . (strlen($this->additionalParameters['mountPoint']) > 0 ? ' (MountPoint ' . $this->additionalParameters['mountPoint'] . ')' : '') . (intval($this->additionalParameters['sysLanguageUid']) > 0 ? ' (SysLanguageUid ' . $this->additionalParameters['sysLanguageUid'] . ')': '') . (strlen($this->additionalParameters['additionalGetParameters']) > 0 ? ' (AdditionalGetParameters ' . $this->additionalParameters['additionalGetParameters'] . ')': '') . (strlen($this->additionalParameters['domainName']) > 0 ? ' (DomainName ' . $this->additionalParameters['domainName'] . ')': '') .'</li>';
+					if ($this->validRelation) {
+						$this->hreflangAttributes[] = '<li>' . $this->hreflangAttribute . (strlen($this->additionalParameters['mountPoint']) > 0 ? ' (MountPoint ' . $this->additionalParameters['mountPoint'] . ')' : '') . (intval($this->additionalParameters['sysLanguageUid']) > 0 ? ' (SysLanguageUid ' . $this->additionalParameters['sysLanguageUid'] . ')' : '') . (strlen($this->additionalParameters['additionalGetParameters']) > 0 ? ' (AdditionalGetParameters ' . $this->additionalParameters['additionalGetParameters'] . ')' : '') . (strlen($this->additionalParameters['domainName']) > 0 ? ' (DomainName ' . $this->additionalParameters['domainName'] . ')' : '') . '</li>';
+					}
 					$this->signalSlotDispatcher->dispatch(__CLASS__, 'backend_afterRenderSingleHreflangAttribute', array($this));
 				}
 				if (count($this->hreflangAttributes) > 0) {
@@ -156,6 +167,7 @@ class HreflangTags {
 			$GLOBALS['TSFE']->linkVars = implode('&', array_diff(\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('&', $linkVars), array('L='. $GLOBALS['TSFE']->sys_language_uid)));
 			foreach ($relations as $this->relatedPage => $info) {
 				foreach ($info as $this->hreflangAttribute => $this->additionalParameters) {
+					$this->validRelation = true;
 					$this->getParameters = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET();
 					unset($this->getParameters['id']);
 					unset($this->getParameters['L']);
@@ -171,7 +183,9 @@ class HreflangTags {
 					}
 
 					$this->signalSlotDispatcher->dispatch(__CLASS__, 'frontend_beforeRenderSingleTag', array($this));
-					$this->renderedListItem = '<link rel="alternate" hreflang="' . $this->hreflangAttribute . '" href="' . $this->buildLink() . '" />';
+					if ($this->validRelation) {
+						$this->renderedListItem = '<link rel="alternate" hreflang="' . $this->hreflangAttribute . '" href="' . $this->buildLink() . '" />';
+					}
 					$this->signalSlotDispatcher->dispatch(__CLASS__, 'frontend_afterRenderSingleTag', array($this));
 					$this->renderedListItems[] = $this->renderedListItem;
 				}
@@ -304,6 +318,21 @@ class HreflangTags {
 	public function getRenderedList() {
 		return $this->renderedList;
 	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getValidRelation() {
+		return $this->validRelation;
+	}
+
+	/**
+	 * @param boolean $validRelation
+	 */
+	public function setValidRelation($validRelation) {
+		$this->validRelation = $validRelation;
+	}
+
 
 	/**
 	 * Get hreflang relations from cache or generate the list and cache them
