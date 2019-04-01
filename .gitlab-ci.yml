@@ -8,7 +8,7 @@ variables:
   COMPOSER_CACHE_DIR: ".composer"
   COMPOSER_PROCESS_TIMEOUT: "1800"
   COMPOSER_ALLOW_SUPERUSER: "1"
-  TYPO3_VERSION: ^8
+  TYPO3_VERSION: ^9
   TYPO3_PATH_WEB: "$CI_PROJECT_DIR/.Build/Web"
   MYSQL_DATABASE: "typo3"
   MYSQL_ROOT_PASSWORD: "joh316"
@@ -47,3 +47,15 @@ typo3_8lts php_7-1:
   image: php:7.1-alpine
   variables:
     TYPO3_VERSION: ^8
+
+typo3_8lts php_7-2:
+  <<: *test_php
+  image: php:7.2-alpine
+  variables:
+    TYPO3_VERSION: ^8
+
+typo3_9lts php_7-2:
+  <<: *test_php
+  image: php:7.2-alpine
+  variables:
+    TYPO3_VERSION: ^9
