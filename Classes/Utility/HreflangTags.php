@@ -188,7 +188,9 @@ class HreflangTags {
 						$this->renderedListItem = '<link rel="alternate" hreflang="' . $this->hreflangAttribute . '" href="' . $this->buildLink() . '" />';
 					}
 					$this->signalSlotDispatcher->dispatch(__CLASS__, 'frontend_afterRenderSingleTag', array($this));
-					$this->renderedListItems[] = $this->renderedListItem;
+					if($this->renderedListItem !== ''){
+						$this->renderedListItems[] = $this->renderedListItem;
+					}
 				}
 			}
 			sort($this->renderedListItems);
