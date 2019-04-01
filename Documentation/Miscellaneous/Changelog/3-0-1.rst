@@ -12,5 +12,6 @@
    * 2019-04-01 [BUGFIX] Don't create empty list items
    * 2019-04-01 [BUGFIX] Fix testing for TYPO3 9
    * 2019-04-01 [BUGFIX] Fix for removed pages_language_overlay (Core change #82445)
+   * 2019-04-01 [BUGFIX] Fix for removed column workspace_preview in be_users (Core change #???)
 
 There is still one open TODO: Test, what happens when there are nested mountpoints.
