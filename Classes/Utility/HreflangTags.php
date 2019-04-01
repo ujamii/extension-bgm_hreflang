@@ -421,7 +421,11 @@ class HreflangTags {
 			);
 		}
 
-		$translations = array_keys($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('sys_language_uid', 'pages_language_overlay', 'pid=' . intval($pageId) . ' AND deleted+hidden=0 ', '', '', '', 'sys_language_uid'));
+		if(version_compare(TYPO3_branch, '9.0', '<')){
+			$translations = array_keys($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('sys_language_uid', 'pages_language_overlay', 'pid=' . intval($pageId) . ' AND deleted+hidden=0 ', '', '', '', 'sys_language_uid'));
+		} else {
+			$translations = array_keys($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('sys_language_uid', 'pages', 'pid=' . intval($pageId) . ' AND deleted+hidden=0 AND sys_language_uid > 0', '', '', '', 'sys_language_uid'));
+		}
 		foreach ($translations as $translation) {
 			if(isset($countryMapping['languageMapping'][$translation])) {
 				$this->hreflangAttributes[$countryMapping['languageMapping'][$translation] . ($rootPageId == $defaultCountryId ? '' : '-' . $countryMapping['countryCode'])] = array(

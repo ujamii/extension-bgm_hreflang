@@ -11,5 +11,6 @@
    * 2019-04-01 [BUGFIX] Reset current renderedListItem
    * 2019-04-01 [BUGFIX] Don't create empty list items
    * 2019-04-01 [BUGFIX] Fix testing for TYPO3 9
+   * 2019-04-01 [BUGFIX] Fix for removed pages_language_overlay (Core change #82445)
 
 There is still one open TODO: Test, what happens when there are nested mountpoints.

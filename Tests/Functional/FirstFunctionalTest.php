@@ -56,8 +56,12 @@ class FirstFunctionalTest extends \Nimut\TestingFramework\TestCase\FunctionalTes
         $this->fixturePath = ORIGINAL_ROOT . 'typo3conf/ext/bgm_hreflang/Tests/Functional/Fixtures/';
 
         // Import own fixtures
-        $this->importDataSet($this->fixturePath . 'Database/pages.xml');
-        $this->importDataSet($this->fixturePath . 'Database/pages_language_overlay.xml');
+        if(version_compare(TYPO3_branch, '9.0', '<')){
+            $this->importDataSet($this->fixturePath . 'Database/pages.xml');
+            $this->importDataSet($this->fixturePath . 'Database/pages_language_overlay.xml');
+        } else {
+            $this->importDataSet($this->fixturePath . 'Database/pages_translations.xml');
+        }
         $this->importDataSet($this->fixturePath . 'Database/sys_language.xml');
         $this->importDataSet($this->fixturePath . 'Database/tx_bgmhreflang_page_page_mm.xml');
         $this->importDataSet($this->fixturePath . 'Database/be_users.xml');
