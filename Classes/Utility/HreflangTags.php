@@ -1,6 +1,9 @@
 <?php
 namespace BGM\BgmHreflang\Utility;
 
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 class HreflangTags {
 
 	/**
@@ -378,15 +381,27 @@ class HreflangTags {
 	 */
 	protected function buildRelations($pageId, &$relations) {
 		$relations[$pageId] = $this->buildHreflangAttributes($pageId);
+		$queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+			->getQueryBuilderForTable('tx_bgmhreflang_page_page_mm');
 
-		$directRelations = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tx_bgmhreflang_page_page_mm', 'uid_local=' . intval($pageId) . '');
+		$directRelations = $queryBuilder
+			->select('*')
+			->from('tx_bgmhreflang_page_page_mm')
+			->where($queryBuilder->expr()->eq('uid_local', intval($pageId)))
+			->execute()
+			->fetchAll();
 		for ($i = 0; $i < count($directRelations); $i++) {
 			if (!isset($relations[$directRelations[$i]['uid_foreign']])) {
 				$this->buildRelations($directRelations[$i]['uid_foreign'], $relations);
 			}
 		}
 
-		$indirectRelations = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tx_bgmhreflang_page_page_mm', 'uid_foreign=' . intval($pageId) . '');
+		$indirectRelations = $queryBuilder
+			->select('*')
+			->from('tx_bgmhreflang_page_page_mm')
+			->where($queryBuilder->expr()->eq('uid_foreign', intval($pageId)))
+			->execute()
+			->fetchAll();
 		for ($i = 0; $i < count($indirectRelations); $i++) {
 			if(!isset($relations[$indirectRelations[$i]['uid_local']])){
 				$this->buildRelations($indirectRelations[$i]['uid_local'], $relations);
@@ -424,9 +439,20 @@ class HreflangTags {
 		if(version_compare(TYPO3_branch, '9.0', '<')){
 			$translations = array_keys($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('sys_language_uid', 'pages_language_overlay', 'pid=' . intval($pageId) . ' AND deleted+hidden=0 ', '', '', '', 'sys_language_uid'));
 		} else {
-			$translations = array_keys($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('sys_language_uid', 'pages', 'pid=' . intval($pageId) . ' AND deleted+hidden=0 AND sys_language_uid > 0', '', '', '', 'sys_language_uid'));
+			$queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+				->getQueryBuilderForTable('pages');
+			$translations = $queryBuilder
+				->select('sys_language_uid')
+				->from('pages')
+				->where($queryBuilder->expr()->eq('l10n_parent', intval($pageId)))
+				->andWhere($queryBuilder->expr()->gt('sys_language_uid', 0))
+				->execute()
+				->fetchAll();
 		}
 		foreach ($translations as $translation) {
+			if($translation['sys_language_uid']){
+				$translation = $translation['sys_language_uid'];
+			}
 			if(isset($countryMapping['languageMapping'][$translation])) {
 				$this->hreflangAttributes[$countryMapping['languageMapping'][$translation] . ($rootPageId == $defaultCountryId ? '' : '-' . $countryMapping['countryCode'])] = array(
 					'sysLanguageUid' => $translation,
@@ -486,7 +512,15 @@ class HreflangTags {
 		foreach($rootline as $page){
 			$rootlineIds[] = $page['uid'];
 		}
-		$mountPoints = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('CONCAT(mount_pid, "-", uid) as mountPoint', 'pages', 'doktype = 7 AND mount_pid IN (' . implode(',', $rootlineIds) . ') AND deleted+hidden = 0');
+		$queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+			->getQueryBuilderForTable('pages');
+		$mountPoints = $queryBuilder
+			->selectLiteral('CONCAT(mount_pid, "-", uid) AS mountPoint')
+			->from('pages')
+			->where($queryBuilder->expr()->eq('doktype', 7))
+			->andWhere($queryBuilder->expr()->in('mount_pid', $rootlineIds))
+			->execute()
+			->fetchAll();
 
 		return $mountPoints;
 	}
