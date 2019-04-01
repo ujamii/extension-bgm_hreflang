@@ -10,5 +10,6 @@
    * 2019-04-01 [TASK] Update nimut/testingframework for php7.2
    * 2019-04-01 [BUGFIX] Reset current renderedListItem
    * 2019-04-01 [BUGFIX] Don't create empty list items
+   * 2019-04-01 [BUGFIX] Fix testing for TYPO3 9
 
 There is still one open TODO: Test, what happens when there are nested mountpoints.
