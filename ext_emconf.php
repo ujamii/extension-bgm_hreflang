@@ -16,8 +16,8 @@ $EM_CONF[$_EXTKEY] = array(
 		Page translations are added automatically as hreflang tags.
 		Editors can configure other pages in the page properties which should be added as hreflang tags.',
 	'category' => 'Plugin',
-	'author' => 'bgm websolutions GmbH & Co. KG',
-	'author_email' => 'typo3@bgm-gmbh.de',
+	'author' => 'bgm websolutions GmbH & Co. KG, Marco Huber',
+	'author_email' => 'typo3@bgm-gmbh.de, mail@marco-huber.de',
 	'author_company' => 'bgm websolutions GmbH & Co. KG',
 	'shy' => '',
 	'priority' => '',
@@ -29,7 +29,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'modify_tables' => '',
 	'clearCacheOnLoad' => 0,
 	'lockType' => '',
-	'version' => '3.0.0',
+	'version' => '3.0.1',
 	'constraints' => array(
 		'depends' => array(
 			'typo3' => '8.0.0-8.7.99',

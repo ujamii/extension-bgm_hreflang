@@ -1,0 +1,10 @@
+
+
+3.0.1 - 2019/04/01
+------------------
+
+::
+
+   * 2019-04-01 [TASK] Raise version number
+
+There is still one open TODO: Test, what happens when there are nested mountpoints.

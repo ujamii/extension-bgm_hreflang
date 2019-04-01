@@ -18,11 +18,9 @@ GitHub        https://github.com/bgmgmbh/extension-bgm_hreflang
 
 ## Author
 
-This extension was created by Marco Huber and the bgm websolutions development team. 
+This extension was created by the bgm websolutions development team and Marco Huber. 
 
-* <a href="https://twitter.com/mhuber84">@mhuber84</a>
-* mail@marco-huber.de
-* marco.huber@bgm-gmbh.de
 * <a href="http://typo3.bgm-gmbh.de">bgm Websolutions GmbH & Co. KG</a>
+* <a href="https://marco-huber.de">Marco Huber</a>, <a href="https://twitter.com/mhuber84">@mhuber84</a>, mail@marco-huber.de
 
 Feel free to contribute and send in pull requests or create an issue.

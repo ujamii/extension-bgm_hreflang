@@ -37,10 +37,12 @@ bgm hreflang
 		2018
 
 	:Author:
-		`bgm websolutions GmbH & Co. KG <http://typo3.bgm-gmbh.de/>`_ (Marco Huber)
+		`bgm websolutions GmbH & Co. KG <http://typo3.bgm-gmbh.de/>`
+		Marco Huber
 
 	:Email:
-		typo3@bgm-gmbh.de (marco.huber@bgm-gmbh.de)
+		typo3@bgm-gmbh.de
+		mail@marco-huber.de
 
 	:License:
 		This document is published under the Open Content License
