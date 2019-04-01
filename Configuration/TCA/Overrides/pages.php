@@ -24,16 +24,9 @@ $tempColumns = array(
 			'autoSizeMax' => 30,
 			'minitems' => 0,
 			'maxitems' => 9999,
-			'selectedListStyle' => 'width:400px;',
-			'show_thumbs' => 1,
-			'wizards' => array(
-				'_PADDING' => 0,
-				'_VERTICAL' => 0,
-				'suggest' => array(
-					'type' => 'suggest',
-					'pages' => array(
-						'searchWholePhrase' => 1,
-					),
+			'suggestOptions' => array(
+				'default' => array(
+					'searchWholePhrase' => 1,
 				),
 			),
 		),
@@ -58,9 +51,11 @@ $tempColumns = array(
 			'autoSizeMax' => 30,
 			'minitems' => 0,
 			'maxitems' => 9999,
-			'selectedListStyle' => 'width:400px;',
-			'disable_controls' => 'browser',
-			'show_thumbs' => 1,
+			'fieldControl' => array(
+				'elementBrowser' => array(
+					'disabled' => true,
+				),
+			),
 		),
 	),
 	'tx_bgmhreflang_list' => array(
