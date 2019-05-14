@@ -428,12 +428,21 @@ class HreflangTags {
 			$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'][intval($rootPageId)]['domainName'] :'';
 
 		if($rootPageId == $defaultCountryId || isset($countryMapping['languageMapping'][0])) {
-			$this->hreflangAttributes[($rootPageId == $defaultCountryId ? 'x-default' : $countryMapping['languageMapping'][0] . '-' . $countryMapping['countryCode'])] = array(
+			$hrefLangValues= array(
 				'sysLanguageUid' => 0,
 				'mountPoint' => $mountPoint,
-				'domainName' => $domainName,
+				'domainName' => isset($domainName[0]) ? $domainName[0] : $domainName,
 				'additionalGetParameters' => $countryMapping['additionalGetParameters'][0],
 			);
+			if ($rootPageId == $defaultCountryId) {
+				$this->hreflangAttributes['x-default'] = $hrefLangValues;
+			}
+			if (!empty($countryMapping['countryCode'])) {
+				$country = '-' . $countryMapping['countryCode'];
+			} else {
+				$country = '';
+			}
+			$this->hreflangAttributes[$countryMapping['languageMapping'][0] . $country] = $hrefLangValues;
 		}
 
 		if(version_compare(TYPO3_branch, '9.0', '<')){
@@ -454,10 +463,14 @@ class HreflangTags {
 				$translation = $translation['sys_language_uid'];
 			}
 			if(isset($countryMapping['languageMapping'][$translation])) {
-				$this->hreflangAttributes[$countryMapping['languageMapping'][$translation] . ($rootPageId == $defaultCountryId ? '' : '-' . $countryMapping['countryCode'])] = array(
+				$langRegionKey = $countryMapping['languageMapping'][$translation];
+				if ($rootPageId != $defaultCountryId && strstr($langRegionKey, '-') === false) {
+					$langRegionKey .= '-' . $countryMapping['countryCode'];
+				}
+				$this->hreflangAttributes[$langRegionKey] = array(
 					'sysLanguageUid' => $translation,
 					'mountPoint' => $mountPoint,
-					'domainName' => $domainName,
+					'domainName' => isset($domainName[$translation]) ? $domainName[$translation] : $domainName,
 					'additionalGetParameters' => $countryMapping['additionalGetParameters'][$translation],
 				);
 			}
@@ -475,10 +488,14 @@ class HreflangTags {
 				}
 				foreach ($translations as $translation) {
 					if (isset($countryMapping['languageMapping'][$translation])) {
-						$this->hreflangAttributes[$countryMapping['languageMapping'][$translation] . '-' . $additionalCountry] = array(
+						$langRegionKey = $countryMapping['languageMapping'][$translation];
+						if (strstr($langRegionKey, '-') === false) {
+							$langRegionKey .= '-' . $additionalCountry;
+						}
+						$this->hreflangAttributes[$langRegionKey] = array(
 							'sysLanguageUid' => $translation,
 							'mountPoint' => $mountPoint,
-							'domainName' => $domainName,
+							'domainName' => isset($domainName[$translation]) ? $domainName[$translation] : $domainName,
 							'additionalGetParameters' => $countryMapping['additionalGetParameters'][$translation],
 						);
 					}
