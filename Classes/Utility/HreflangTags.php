@@ -420,6 +420,9 @@ class HreflangTags {
 		$this->hreflangAttributes = array();
 
 		$rootline = $this->getRootLine($pageId, $mountPoint);
+		if (empty($rootline)) {
+			return $this->hreflangAttributes;
+		}
 		$rootPageId = $this->getRootPageId($rootline);
 
 		$countryMapping = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['bgm_hreflang']['countryMapping'][intval($rootPageId)];
