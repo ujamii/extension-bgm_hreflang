@@ -175,7 +175,7 @@ class HreflangTags {
 					$this->getParameters = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET();
 					unset($this->getParameters['id']);
 					unset($this->getParameters['L']);
-					if(intval($this->additionalParameters['sysLanguageUid']) > 0){
+					if(isset($this->additionalParameters['sysLanguageUid'])){
 						$this->getParameters['L'] = intval($this->additionalParameters['sysLanguageUid']);
 					}
 					unset($this->getParameters['MP']);
