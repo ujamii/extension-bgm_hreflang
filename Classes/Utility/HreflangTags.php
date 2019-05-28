@@ -115,7 +115,7 @@ class HreflangTags {
 
 			foreach($relations as $this->relatedPage => $info){
 				$this->signalSlotDispatcher->dispatch(__CLASS__, 'backend_beforeRenderSinglePage', array($this));
-				$this->renderedListItem = '<li>' . \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordPath($this->relatedPage, '', 1000) . ' [' . $this->relatedPage . ']';
+				$this->renderedListItem = '<li>' . $this->getRootlineForPage($this->relatedPage) . ' [' . $this->relatedPage . ']';
 				$this->hreflangAttributes = array();
 				foreach ($info as $this->hreflangAttribute => $this->additionalParameters) {
 					$this->validRelation = true;
@@ -139,6 +139,25 @@ class HreflangTags {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, 'backend_afterRender', array($this));
 
 		return $this->renderedList;
+	}
+
+	/**
+	 * Like \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordPath() but with nav_title as primary option and
+	 * title field as fallback.
+	 *
+	 * @param int $pageUid
+	 *
+	 * @return string
+	 */
+	protected function getRootlineForPage(int $pageUid) : string
+	{
+		$rootline = [];
+		$pageRecords = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($pageUid, '', false, ['nav_title']);
+		ksort($pageRecords);
+		foreach ($pageRecords as $page) {
+			$rootline[] = $page['nav_title'] ?? $page['title'];
+		}
+		return implode('/', $rootline);
 	}
 
 	/**
